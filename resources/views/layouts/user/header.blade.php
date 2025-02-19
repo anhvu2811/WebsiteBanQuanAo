@@ -1,4 +1,130 @@
 @extends('layouts/user/resources')
+<style>
+   .user-name-dropdown {
+      position: relative;
+   }
+
+   .user-name-dropdown:hover .dropdown-menu-user {
+      display: block;
+      cursor: pointer;
+   }
+
+   .dropdown-menu-user {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: black;
+      color: #fff;
+      border: 1px solid black;
+      min-width: 130px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      margin-top: -2px;
+      border-radius: 5px;
+   }
+
+   .dropdown-menu-user li {
+      list-style: none;
+      height: 50px;
+   }
+
+   .dropdown-menu-user li a {
+      text-decoration: none;
+      color: #fff;
+   }
+
+   .dropdown-menu-user li a:hover {
+      color: #007bff;
+   }
+
+   .dropdown-menu-user li button {
+      background-color: #333;
+      color: #fff;
+      padding: 3px 7px;
+      border: none;
+      font-size: 14px;
+      border-radius: 5px;
+      transition: background-color 0.3s, transform 0.3s;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+      margin-top: 10px;
+   }
+
+   .dropdown-menu-user li button:hover {
+      background-color: #e8b34f;
+      transform: scale(1.05);
+   }
+
+   .dropdown-menu-user li button:focus {
+      outline: none;
+   }
+
+   /* The Modal (background) */
+   .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1000; /* Sit on top */
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5); /* Black background with opacity */
+   }
+
+   /* Modal Content (The Form) */
+   .modal-content {
+      background-color: #fff;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      width: 350px;
+      border-radius: 8px;
+   }
+
+   /* The Close Button */
+   .close {
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      position: absolute;
+      top: 5px;
+      right: 15px;
+   }
+
+   .close:hover,
+   .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+   }
+
+   /* Style for form inputs */
+   input[type="password"] {
+      width: 100%;
+      padding: 8px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+   }
+
+   /* Style for the submit button */
+   button[type="submit"] {
+      background-color: #e8b34f;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+   }
+
+   button[type="submit"]:hover {
+      background-color: #e8b34f;
+   }
+
+
+</style>
 <header class="header">
     <div class="topbar">
        <div class="container">
@@ -14,35 +140,45 @@
                   {{ $setting->time_active ?? 'NULL'}}
                 </span>
              </div>
-             <div class="col-sm-6 col-md-5 col-xs-12">
-                <ul class="list-inline f-right">
-                   {{-- <li><i class="fa fa-unlock-alt"></i> <a href="/account/register">Đăng ký</a></li> --}}
-                   @if(session('user'))
-                     <li><i class="fa fa-user"></i> {{ session('user')->name }}</li>
-                     <li>
-                        <form action="{{ route('logout')}}" method="post">
-                           @csrf
-                           <button type="submit">Đăng xuất</button>
-                        </form>
+               <div class="col-sm-6 col-md-5 col-xs-12">
+                  <ul class="list-inline f-right">
+                     {{-- <li><i class="fa fa-unlock-alt"></i> <a href="/account/register">Đăng ký</a></li> --}}
+                     <?php 
+                        $user = auth()->user();
+                     ?>
+                     @if($user)
+                        <li class="user-name-dropdown">
+                           <i class="fa fa-user"></i> {{ $user->name }}
+                           <ul class="dropdown-menu-user">
+                                 <li>
+                                    <button type="button" id="change-password-btn">Đổi mật khẩu</button>
+                                 </li>
+                                 <li>
+                                    <form action="{{ route('logout') }}" method="post">
+                                       @csrf
+                                       <button type="submit">Đăng xuất</button>
+                                    </form>
+                                 </li>
+                           </ul>
+                        </li>
+                     @else
+                        <li><i class="fa fa-user"></i> <a href="/account/login">Đăng nhập</a></li>
+                     @endif
+                     <li class="search">
+                        <a href="javascript:;"><i class="fa fa-search"></i></a>
+                        <div class="header_search search_form">
+                           <form class="input-group search-bar search_form" action="/product/search" method="get" role="search">
+                                 <input type="search" name="q" value="" placeholder="Tìm kiếm sản phẩm..." class="input-group-field st-default-search-input search-text" autocomplete="off">
+                                 <span class="input-group-btn">
+                                    <button class="btn icon-fallback-text">
+                                       <i class="fa fa-search"></i>
+                                    </button>
+                                 </span>
+                           </form>
+                        </div>
                      </li>
-                   @else
-                     <li><i class="fa fa-user"></i> <a href="/account/login">Đăng nhập</a></li>
-                   @endif
-                   <li class="search">
-                      <a href="javascript:;"><i class="fa fa-search"></i></a>
-                      <div class="header_search search_form">
-                         <form class="input-group search-bar search_form" action="/product/search" method="get" role="search">		
-                            <input type="search" name="q" value="" placeholder="Tìm kiếm sản phẩm... " class="input-group-field st-default-search-input search-text" autocomplete="off">
-                            <span class="input-group-btn">
-                            <button class="btn icon-fallback-text">
-                            <i class="fa fa-search"></i>
-                            </button>
-                            </span>
-                         </form>
-                      </div>
-                   </li>
-                </ul>
-             </div>
+                  </ul>
+               </div>
           </div>
        </div>
     </div>
@@ -124,6 +260,30 @@
           <li class="nav-item "><a class="nav-link" href="/news">Tin tức</a></li>
        </ul>
     </nav>
+
+   <div id="change-password-modal" class="modal">
+      <div class="modal-content">
+         <span id="close-modal" class="close">&times;</span>
+         <h2>Đổi mật khẩu</h2>
+         <form action="/change-password" method="POST">
+               @csrf
+               <div>
+                  <label for="current-password">Mật khẩu hiện tại</label>
+                  <input type="password" id="current-password" name="current_password" required>
+               </div>
+               <div>
+                  <label for="new-password">Mật khẩu mới</label>
+                  <input type="password" id="new-password" name="new_password" required>
+               </div>
+               <div>
+                  <label for="confirm-password">Xác nhận mật khẩu</label>
+                  <input type="password" id="confirm-password" name="confirm_password" required>
+               </div>
+               <center><button type="submit">Lưu thay đổi</button></center>
+         </form>
+      </div>
+   </div>
+
     <script>
       document.addEventListener("DOMContentLoaded", function() {
          const menuBar = document.querySelector('.menu-bar');
@@ -132,6 +292,25 @@
          menuBar.addEventListener('click', function() {
             navMobile.classList.toggle('show');
          });
+      });
+      document.addEventListener("DOMContentLoaded", function() {
+         var modal = document.getElementById("change-password-modal");
+         var btn = document.getElementById("change-password-btn");
+         var closeModal = document.getElementById("close-modal");
+
+         btn.onclick = function() {
+            modal.style.display = "block";
+         }
+
+         closeModal.onclick = function() {
+            modal.style.display = "none";
+         }
+
+         window.onclick = function(event) {
+            if (event.target == modal) {
+                  modal.style.display = "none";
+            }
+         }
       });
 
     </script>

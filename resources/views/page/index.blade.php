@@ -311,63 +311,83 @@
         <div class="section section-collection-products products-view-grid">
            <div class="container">
               <div class="row">
-                 <div class="col-md-12 col-sm-12">
-                    <div class="section-title a-center">
-                       <h2>Sản phẩm bán chạy</h2>
-                    </div>
-                    <div class="section-content">
-                       <div class="swiper_col_1 swiper-container products products-view-grid">
-                          <div class="swiper-wrapper">
-                             <div class="swiper-slide">
-                                <div class="product-box a-center">
-                                   <div class="product-thumbnail">
-                                      <div class="sale-flash"> 
-                                         8% 
-                                      </div>
-                                      <a href="/ruou-remy-martin-club" title="Rượu Remy Martin CLUB">
-                                         <picture>
-                                            <source media="(min-width: 1200px)" srcset="images/ruou24_1.jpg">
-                                            <source media="(min-width: 992px)" srcset="images/ruou24_1.jpg">
-                                            <source media="(min-width: 569px)" srcset="images/ruou24_1.jpg">
-                                            <source media="(max-width: 480px)" srcset="images/ruou24.jpg">
-                                            <source media="(max-width: 375px)" srcset="images/ruou24.jpg">
-                                            <img width="240" height="240" data-src="https://bizweb.dktcdn.net/100/022/044/products/ruou24.jpg?v=1445851659983" alt="Rượu Remy Martin CLUB" class="lazyload img-responsive center-block">
-                                         </picture>
-                                      </a>
-                                      {{-- <div class="product-action clearfix">
-                                         <form action="{{ route('cart.add') }}" method="post" class="variants form-nut-grid" data-id="product-actions-507866" enctype="multipart/form-data">
-                                             @csrf
-                                             <div>
-                                               <input type="hidden" name="variantId" value="811090">
-                                               <button class="btn-buy btn-cart btn btn-primary left-to add_to_cart " title="Cho vào giỏ hàng">
-                                                  <span>
-                                                     <i class="fa fa-cart-plus" aria-hidden="true"></i>
-                                                     Mua hàng
-                                                  </span>
-                                               </button>
-                                            </div>
-                                         </form>
-                                      </div> --}}
-                                   </div>
-                                   <div class="product-info">
-                                      <h3 class="product-name"><a href="/ruou-remy-martin-club" title="Rượu Remy Martin CLUB">Rượu Remy Martin CLUB</a></h3>
-                                      <div class="price-box clearfix">
-                                         <div class="special-price inline-block">
-                                            <span class="price product-price">1.230.000₫</span>
-                                         </div>
-                                         <div class="old-price inline-block">															 
-                                            <span class="price product-price-old">
-                                            1.340.000₫			
-                                            </span>
-                                         </div>
-                                      </div>
-                                   </div>
-                                </div>
+                  @if($bestSellingProducts) 
+                     <div class="col-md-12 col-sm-12">
+                        <div class="section-title a-center">
+                           <h2>Sản phẩm bán chạy</h2>
+                        </div>
+                        <div class="section-content">
+                           <div class="swiper_col_1 swiper-container products products-view-grid">
+                              <div class="swiper-wrapper">
+                                 @foreach($bestSellingProducts as $product)
+                                    <div class="swiper-slide">
+                                       <div class="product-box a-center">
+                                          <div class="product-thumbnail">
+                                             @if($product->discount)
+                                                <div class="sale-flash"> 
+                                                   {{ $product->discount->discount_level }}% 
+                                                </div>
+                                             @endif
+                                             <a href="/collections/{{ $product->id }}" title="Rượu Remy Martin CLUB">
+                                                <picture>
+                                                   <source media="(min-width: 1200px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
+                                                   <source media="(min-width: 992px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
+                                                   <source media="(min-width: 569px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
+                                                   <source media="(max-width: 480px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
+                                                   <source media="(max-width: 375px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
+                                                   <img width="240" height="240" data-src="{{ asset('storage/' . $product->images->first()->image_url) }}" alt="{{ $product->name }}" class="lazyload img-responsive center-block">
+                                                </picture>
+                                             </a>
+                                             {{-- <div class="product-action clearfix">
+                                                <form action="{{ route('cart.add') }}" method="post" class="variants form-nut-grid" data-id="product-actions-507866" enctype="multipart/form-data">
+                                                   @csrf
+                                                   <div>
+                                                      <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                      <input type="hidden" name="quantity" value="1" min="1" max="10">
+                                                      @if($product->discount) 
+                                                         <input type="hidden" name="price" value="{{ $product->discount->new_price }}">
+                                                      @else
+                                                         <input type="hidden" name="price" value="{{ $product->price }}">
+                                                      @endif
+                                                      <button class="btn-buy btn-cart btn btn-primary left-to add_to_cart " title="Cho vào giỏ hàng">
+                                                         <span>
+                                                            <i class="fa fa-cart-plus" aria-hidden="true"></i>
+                                                            Mua hàng
+                                                         </span>
+                                                      </button>
+                                                   </div>
+                                                </form>
+                                             </div> --}}
+                                          </div>
+                                          <div class="product-info">
+                                             <h3 class="product-name"><a href="/ruou-remy-martin-club" title="Rượu Remy Martin CLUB">{{ $product->name }}</a></h3>
+                                             <div class="price-box clearfix">
+                                                @if($product->discount)
+                                                   <div class="special-price inline-block">
+                                                      <span class="price product-price">{{ number_format($product->discount->new_price, 0, ',', '.') }}₫</span>
+                                                   </div>
+                                                   <div class="old-price inline-block">															 
+                                                      <span class="price product-price-old">
+                                                         {{ number_format($product->price, 0, ',', '.') }}₫
+                                                      </span>
+                                                   </div>
+                                                @else
+                                                   <div class="special-price inline-block">
+                                                      <span class="price product-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
+                                                   </div>
+                                                @endif
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 @endforeach
                              </div>
-                          </div>
-                       </div>
-                    </div>
-                 </div>
+                           </div>
+                        </div>
+                     </div>
+                     @foreach($bestSellingProducts as $product)
+                     @endforeach
+                  @endif
               </div>
            </div>
         </div>
@@ -408,79 +428,81 @@
         <div class="section section-collection-products products-view-grid">
            <div class="container">
               <div class="row">
-                 <div class="col-md-12 col-sm-12">
-                    <div class="section-title a-center">
-                       <h2>Hot nhất hôm nay</h2>
-                    </div>
-                    <div class="section-content">
-                       <div class="swiper_col_2 swiper-container products products-view-grid">
-                          <div class="swiper-wrapper">
-                              @foreach($listLatestProducts as $product)
-                                 <div class="swiper-slide">
-                                    <div class="product-box a-center">
-                                       <div class="product-thumbnail">
-                                          @if($product->discount)
-                                             <div class="sale-flash"> 
-                                                {{ $product->discount->discount_level }}% 
+                  @if($listLatestProducts)
+                     <div class="col-md-12 col-sm-12">
+                        <div class="section-title a-center">
+                           <h2>Hot nhất hôm nay</h2>
+                        </div>
+                        <div class="section-content">
+                           <div class="swiper_col_2 swiper-container products products-view-grid">
+                              <div class="swiper-wrapper">
+                                    @foreach($listLatestProducts as $product)
+                                       <div class="swiper-slide">
+                                          <div class="product-box a-center">
+                                             <div class="product-thumbnail">
+                                                @if($product->discount)
+                                                   <div class="sale-flash"> 
+                                                      {{ $product->discount->discount_level }}% 
+                                                   </div>
+                                                @endif
+                                                <a href="/collections/{{ $product->id }}" title="Rượu Remy Martin CLUB">
+                                                   <picture>
+                                                      <source media="(min-width: 1200px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
+                                                      <source media="(min-width: 992px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
+                                                      <source media="(min-width: 569px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
+                                                      <source media="(max-width: 480px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
+                                                      <source media="(max-width: 375px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
+                                                      <img width="240" height="240" data-src="{{ asset('storage/' . $product->images->first()->image_url) }}" alt="{{ $product->name }}" class="lazyload img-responsive center-block">
+                                                   </picture>
+                                                </a>
+                                                {{-- <div class="product-action clearfix">
+                                                   <form action="{{ route('cart.add') }}" method="post" class="variants form-nut-grid" data-id="product-actions-507866" enctype="multipart/form-data">
+                                                      @csrf
+                                                      <div>
+                                                         <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                                         <input type="hidden" name="quantity" value="1" min="1" max="10">
+                                                         @if($product->discount) 
+                                                            <input type="hidden" name="price" value="{{ $product->discount->new_price }}">
+                                                         @else
+                                                            <input type="hidden" name="price" value="{{ $product->price }}">
+                                                         @endif
+                                                         <button class="btn-buy btn-cart btn btn-primary left-to add_to_cart " title="Cho vào giỏ hàng">
+                                                            <span>
+                                                               <i class="fa fa-cart-plus" aria-hidden="true"></i>
+                                                               Mua hàng
+                                                            </span>
+                                                         </button>
+                                                      </div>
+                                                   </form>
+                                                </div> --}}
                                              </div>
-                                          @endif
-                                          <a href="/collections/{{ $product->id }}" title="Rượu Remy Martin CLUB">
-                                             <picture>
-                                                <source media="(min-width: 1200px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
-                                                <source media="(min-width: 992px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
-                                                <source media="(min-width: 569px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
-                                                <source media="(max-width: 480px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
-                                                <source media="(max-width: 375px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
-                                                <img width="240" height="240" data-src="{{ asset('storage/' . $product->images->first()->image_url) }}" alt="{{ $product->name }}" class="lazyload img-responsive center-block">
-                                             </picture>
-                                          </a>
-                                          {{-- <div class="product-action clearfix">
-                                             <form action="{{ route('cart.add') }}" method="post" class="variants form-nut-grid" data-id="product-actions-507866" enctype="multipart/form-data">
-                                                @csrf
-                                                <div>
-                                                   <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                                   <input type="hidden" name="quantity" value="1" min="1" max="10">
-                                                   @if($product->discount) 
-                                                      <input type="hidden" name="price" value="{{ $product->discount->new_price }}">
+                                             <div class="product-info">
+                                                <h3 class="product-name"><a href="/ruou-remy-martin-club" title="Rượu Remy Martin CLUB">{{ $product->name }}</a></h3>
+                                                <div class="price-box clearfix">
+                                                   @if($product->discount)
+                                                      <div class="special-price inline-block">
+                                                         <span class="price product-price">{{ number_format($product->discount->new_price, 0, ',', '.') }}₫</span>
+                                                      </div>
+                                                      <div class="old-price inline-block">															 
+                                                         <span class="price product-price-old">
+                                                            {{ number_format($product->price, 0, ',', '.') }}₫
+                                                         </span>
+                                                      </div>
                                                    @else
-                                                      <input type="hidden" name="price" value="{{ $product->price }}">
+                                                      <div class="special-price inline-block">
+                                                         <span class="price product-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
+                                                      </div>
                                                    @endif
-                                                   <button class="btn-buy btn-cart btn btn-primary left-to add_to_cart " title="Cho vào giỏ hàng">
-                                                      <span>
-                                                         <i class="fa fa-cart-plus" aria-hidden="true"></i>
-                                                         Mua hàng
-                                                      </span>
-                                                   </button>
                                                 </div>
-                                             </form>
-                                          </div> --}}
-                                       </div>
-                                       <div class="product-info">
-                                          <h3 class="product-name"><a href="/ruou-remy-martin-club" title="Rượu Remy Martin CLUB">{{ $product->name }}</a></h3>
-                                          <div class="price-box clearfix">
-                                             @if($product->discount)
-                                                <div class="special-price inline-block">
-                                                   <span class="price product-price">{{ number_format($product->discount->new_price, 0, ',', '.') }}₫</span>
-                                                </div>
-                                                <div class="old-price inline-block">															 
-                                                   <span class="price product-price-old">
-                                                      {{ number_format($product->price, 0, ',', '.') }}₫
-                                                   </span>
-                                                </div>
-                                             @else
-                                                <div class="special-price inline-block">
-                                                   <span class="price product-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
-                                                </div>
-                                             @endif
+                                             </div>
                                           </div>
                                        </div>
-                                    </div>
-                                 </div>
-                              @endforeach
-                          </div>
-                       </div>
-                    </div>
-                 </div>
+                                    @endforeach
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  @endif
               </div>
            </div>
         </div>

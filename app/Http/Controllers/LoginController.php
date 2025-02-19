@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -25,20 +26,29 @@ class LoginController extends Controller
         if(!$password) {
             return back()->withErrors(['errors' => 'Password cannot be empty'])->withInput();
         }
-
-        $hashPassword = Hash::make($password);
+        
         $user = User::where('email', $email)->first();
-        if(!$user || !Hash::check($password, $user->password)) {
-           return back()->withErrors(['errors' => 'Invalid username/password'])->withInput();
+        if (!$user || !Hash::check($password, $user->password)) {
+            return back()->withErrors(['errors' => 'Invalid username/password'])->withInput();
         }
 
-        session(['user' => $user]);
-        return redirect()->route('page.index');
+        if (Auth::attempt(['email' => $email, 'password' => $password])) {
+            $user = auth()->user();
+            switch ($user->role) {
+                case User::ROLE_USER:
+                    return redirect()->route('page.index');
+                case User::ROLE_ADMIN:
+                    return redirect()->route('product.index');
+            }
+        }
+
     }
 
     public function logout(Request $request)
     {
-        $request->session('user')->flush();
+        Auth::logout();
+        session()->invalidate();
+        session()->regenerateToken();
         return redirect()->route('page.index');    
     }
 
@@ -56,6 +66,6 @@ class LoginController extends Controller
 
         Mail::to($email)->send(new ResetPasswordEmail($user->name, $newPassword));
         session()->flash('status', 'Mật khẩu mới đã được gửi vào email của bạn.');
-        return redirect()->route('page.login');
+        return redirect()->route('login');
     }
 }

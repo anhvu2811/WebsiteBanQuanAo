@@ -16,11 +16,13 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+    protected $table = 'tbl_user';
     protected $fillable = [
         'name',
         'email',
         'username',
         'password',
+        'role',
     ];
 
     /**
@@ -45,4 +47,7 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    const ROLE_USER = 0;
+    const ROLE_ADMIN = 1;
 }

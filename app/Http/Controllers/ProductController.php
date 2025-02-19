@@ -12,6 +12,7 @@ use App\Models\ProductImage;
 use App\Models\Trending;
 use App\Models\Setting;
 use App\Models\Banner;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -205,13 +206,27 @@ class ProductController extends Controller
                                 ->orderBy('rank', 'asc') 
                                 ->take(7) 
                                 ->get();
+
         $listLatestProducts = Product::orderBy('created_at', 'desc')
                                 ->take(7) 
                                 ->get();
+
+        $bestSellingProducts = Product::select('tbl_order_item.product_id', DB::raw('count(*) as total'))
+                                        ->join('tbl_order_item', 'tbl_order_item.product_id', '=', 'tbl_product.id')
+                                        ->join('tbl_order', 'tbl_order.id', '=', 'tbl_order_item.order_id')
+                                        ->where('tbl_order.payment_status', 'Completed')
+                                        ->groupBy('tbl_order_item.product_id')
+                                        ->orderByDesc('total')
+                                        ->limit(7)
+                                        ->get()
+                                        ->pluck('product_id');
+        $bestSellingProducts = Product::whereIn('id', $bestSellingProducts)->get();
+                    
         $setting = Setting::first();
         $bannerMain = Banner::where('type', 'main')->get();
         $bannerSub = Banner::where('type', 'sub')->get();
-        return view('page.index', compact('hotTrendProducts', 'listLatestProducts', 'setting', 'bannerMain', 'bannerSub'));
+
+        return view('page.index', compact('hotTrendProducts', 'listLatestProducts', 'bestSellingProducts', 'setting', 'bannerMain', 'bannerSub'));
     }
 
     public function getProductDetail($id)

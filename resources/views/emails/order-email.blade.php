@@ -10,7 +10,7 @@
     <style>
         body { font-family: Arial, sans-serif; }
         .container { width: 100%; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #f0f0f0; border-radius: 8px; background-color: #fafafa; }
-        h1 { color: black; }
+        h1 { color: black; text-align: center;}
         .order-details { margin-top: 20px; }
         .order-details th, .order-details td { padding: 10px; border-bottom: 1px solid #ddd; }
         .order-details th { text-align: left; }
