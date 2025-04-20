@@ -50,9 +50,18 @@
       }
 
    </style>
+   <style>
+      .zoom-hover {
+         transition: transform 0.3s ease;
+      }
+   
+      .zoom-hover:hover {
+         transform: scale(1.06);
+      }
+   </style>
 </head>
 <div>
-    <section class="awe-section-1">
+    <section class="awe-section-1" data-aos="fade-up">
         <div class="home-slider swiper-container">
            <div class="swiper-wrapper">
                @foreach($bannerMain as $banner)
@@ -96,7 +105,7 @@
          </script>
 
     </section>
-    <section class="awe-section-2">
+    <section class="awe-section-2" data-aos="fade-left">
         <div class="container">
            <div class="row">
                {{-- @foreach($bannerSub as $bannerSub)
@@ -115,7 +124,7 @@
            </div>
         </div>
     </section>
-    <section class="awe-section-3">
+    <section class="awe-section-3" data-aos="fade-right">
         <div class="section section-deal products-view-grid">
            <div class="container">
               <div class="section-title a-center">
@@ -141,7 +150,7 @@
                                           <source media="(min-width: 569px)" srcset="{{ asset('storage/' . $hotTrendProduct->product->images->first()->image_url) }}">
                                           <source media="(max-width: 480px)" srcset="{{ asset('storage/' . $hotTrendProduct->product->images->first()->image_url) }}">
                                           <source media="(max-width: 375px)" srcset="{{ asset('storage/' . $hotTrendProduct->product->images->first()->image_url) }}">
-                                          <img width="240" height="240" data-src="{{ asset('storage/' . $hotTrendProduct->product->images->first()->image_url) }}" alt="{{ ($hotTrendProduct->product->name) }}" class="lazyload img-responsive center-block">
+                                          <img width="240" height="240" data-src="{{ asset('storage/' . $hotTrendProduct->product->images->first()->image_url) }}" alt="{{ ($hotTrendProduct->product->name) }}" class="lazyload img-responsive center-block zoom-hover">
                                        </picture>
                                     </a>
                                     {{-- <div class="product-action clearfix">
@@ -225,7 +234,7 @@
            });
         </script>
     </section>
-    <section class="awe-section-4">
+    <section class="awe-section-4" data-aos="zoom-in-up">
         <div class="banner2 hidden-sm hidden-xs">
            <div class="container">
               <div class="row row-8Gutter">
@@ -307,11 +316,11 @@
            </div>
         </div>
     </section>
-    <section class="awe-section-5">
+    <section class="awe-section-5" data-aos="zoom-in-down">
         <div class="section section-collection-products products-view-grid">
            <div class="container">
               <div class="row">
-                  @if($bestSellingProducts) 
+                  @if(count($bestSellingProducts) > 0) 
                      <div class="col-md-12 col-sm-12">
                         <div class="section-title a-center">
                            <h2>Sản phẩm bán chạy</h2>
@@ -335,7 +344,7 @@
                                                    <source media="(min-width: 569px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
                                                    <source media="(max-width: 480px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
                                                    <source media="(max-width: 375px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
-                                                   <img width="240" height="240" data-src="{{ asset('storage/' . $product->images->first()->image_url) }}" alt="{{ $product->name }}" class="lazyload img-responsive center-block">
+                                                   <img width="240" height="240" data-src="{{ asset('storage/' . $product->images->first()->image_url) }}" alt="{{ $product->name }}" class="lazyload img-responsive center-block zoom-hover">
                                                 </picture>
                                              </a>
                                              {{-- <div class="product-action clearfix">
@@ -424,11 +433,11 @@
            });
         </script>
     </section>
-    <section class="awe-section-6">
+    <section class="awe-section-6" data-aos="zoom-out">
         <div class="section section-collection-products products-view-grid">
            <div class="container">
               <div class="row">
-                  @if($listLatestProducts)
+                  @if(count($listLatestProducts) > 0)
                      <div class="col-md-12 col-sm-12">
                         <div class="section-title a-center">
                            <h2>Hot nhất hôm nay</h2>
@@ -452,7 +461,7 @@
                                                       <source media="(min-width: 569px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
                                                       <source media="(max-width: 480px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
                                                       <source media="(max-width: 375px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
-                                                      <img width="240" height="240" data-src="{{ asset('storage/' . $product->images->first()->image_url) }}" alt="{{ $product->name }}" class="lazyload img-responsive center-block">
+                                                      <img width="240" height="240" data-src="{{ asset('storage/' . $product->images->first()->image_url) }}" alt="{{ $product->name }}" class="lazyload img-responsive center-block zoom-hover">
                                                    </picture>
                                                 </a>
                                                 {{-- <div class="product-action clearfix">
@@ -541,5 +550,13 @@
     </section>
     @include('page/list_brands');
 </div>
+
+<script>
+   AOS.init({
+     duration: 2000,
+     once: true
+   });
+ </script>
 @endsection
+
 

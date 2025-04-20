@@ -3,6 +3,15 @@
 <head>
    <title> {{ $setting->site_name ?? 'NULL' }} - Tất Cả Sản Phẩm </title>
 </head>
+<style>
+   .zoom-hover {
+      transition: transform 0.3s ease;
+   }
+
+   .zoom-hover:hover {
+      transform: scale(1.10);
+   }
+</style>
 <div>
     <section class="bread-crumb">
         <div class="container">
@@ -116,7 +125,7 @@
                                              <source media="(max-width: 480px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
                                              <source media="(max-width: 375px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
 
-                                             <img width="240" height="240" data-src="{{ asset('storage/' . $product->images->first()->image_url) }}" alt="{{ $product->name }}" class="lazyload img-responsive center-block">
+                                             <img width="240" height="240" data-src="{{ asset('storage/' . $product->images->first()->image_url) }}" alt="{{ $product->name }}" class="lazyload img-responsive center-block zoom-hover">
                                           </picture>
                                        </a>
                                        {{-- <div class="product-action clearfix">

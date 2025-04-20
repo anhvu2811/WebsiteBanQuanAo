@@ -34,4 +34,8 @@
    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+
+   {{-- animation scroll session index --}}
+   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
  </head>
