@@ -68,4 +68,32 @@ class LoginController extends Controller
         session()->flash('status', 'Mật khẩu mới đã được gửi vào email của bạn.');
         return redirect()->route('login');
     }
+
+    public function changePassword(Request $request)
+    {
+        $newPass = $request->input('new-password');
+        $currentPass = $request->input('current-password');
+        $confirmPass = $request->input('confirm-password');
+
+        $user = auth()->user();
+        if(!Hash::check($currentPass, $user->password)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Current password is incorrect.'
+            ]);
+        }
+        if($newPass != $confirmPass) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'New password and Confirm Password are not the same.'
+            ]);
+        }
+        $user->update([
+            'password' => Hash::make($newPass)
+        ]);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Password updated successfully'
+        ]);
+    }
 }

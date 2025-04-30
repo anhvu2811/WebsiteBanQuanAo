@@ -63,14 +63,14 @@
 
    /* The Modal (background) */
    .modal {
-      display: none; /* Hidden by default */
-      position: fixed; /* Stay in place */
-      z-index: 1000; /* Sit on top */
+      display: none;
+      position: fixed;
+      z-index: 1000;
       left: 0;
       top: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.5); /* Black background with opacity */
+      background-color: rgba(0, 0, 0, 0.5);
    }
 
    /* Modal Content (The Form) */
@@ -123,6 +123,28 @@
       background-color: #e8b34f;
    }
 
+   .password-wrapper {
+      position: relative;
+   }
+
+   .toggle-password {
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 18px;
+   }
+
+   .toggle-password i {
+      color: #aaa;
+   }
+
+   /* Thêm một số hiệu ứng khi hover */
+   .toggle-password:hover i {
+      color: #333;
+   }
+
 
 </style>
 <header class="header">
@@ -133,8 +155,8 @@
                 <span class="header-contact-item"><i class="fa fa-map-marker"></i> 
                 {{ $setting->location ?? 'NULL' }}
                 </span>
-                <span class="header-contact-item hidden-sm"><i class="fa fa-mobile"></i>
-                <a href="tel:19006750" style="color: #fff;">{{ $setting->hotline ?? 'NULL' }}</a>
+                <span class="header-contact-item hidden-sm"><i class="fa fa-mobile-alt"></i>
+                  <a href="tel:19006750" style="color: #fff;">{{ $setting->hotline ?? 'NULL' }}</a>
                 </span>
                 <span class="header-contact-item hidden-sm hidden-xs hidden-md"><i class="fa fa-clock"></i>
                   {{ $setting->time_active ?? 'NULL'}}
@@ -261,24 +283,40 @@
        </ul>
     </nav>
 
-   <div id="change-password-modal" class="modal">
+   <div id="change-password-modal" id="change-password-form" class="modal">
       <div class="modal-content">
          <span id="close-modal" class="close">&times;</span>
-         <h2>Đổi mật khẩu</h2>
-         <form action="/change-password" method="POST">
+         <h2 style="text-align: center; margin-bottom: 20px; margin-top: -10px;">Đổi mật khẩu</h2>
+         <form action="{{ route('change-password') }}" method="POST">
                @csrf
                <div>
                   <label for="current-password">Mật khẩu hiện tại</label>
-                  <input type="password" id="current-password" name="current_password" required>
+                  <div class="password-wrapper">
+                     <input type="password" id="current-password" name="current-password" required>
+                     <span class="toggle-password" id="toggle-current-password">
+                         <i class="fa fa-eye"></i> <!-- Icon "show" -->
+                     </span>
+                 </div>
                </div>
                <div>
                   <label for="new-password">Mật khẩu mới</label>
-                  <input type="password" id="new-password" name="new_password" required>
+                  <div class="password-wrapper">
+                    <input type="password" id="new-password" name="new-password" required>
+                    <span class="toggle-password" id="toggle-new-password">
+                        <i class="fa fa-eye"></i> <!-- Icon "show" -->
+                    </span>
+                </div>
                </div>
                <div>
                   <label for="confirm-password">Xác nhận mật khẩu</label>
-                  <input type="password" id="confirm-password" name="confirm_password" required>
+                  <div class="password-wrapper">
+                     <input type="password" id="confirm-password" name="confirm-password" required>
+                     <span class="toggle-password" id="toggle-confirm-password">
+                         <i class="fa fa-eye"></i> <!-- Icon "show" -->
+                     </span>
+                 </div>
                </div>
+               <div id="response-message"></div>
                <center><button type="submit">Lưu thay đổi</button></center>
          </form>
       </div>
@@ -310,6 +348,32 @@
             if (event.target == modal) {
                   modal.style.display = "none";
             }
+         }
+
+         const toggleCurrentPassword = document.getElementById('toggle-current-password');
+         const toggleNewPassword = document.getElementById('toggle-new-password');
+         const toggleConfirmPassword = document.getElementById('toggle-confirm-password');
+
+         const currentPasswordInput = document.getElementById('current-password');
+         const newPasswordInput = document.getElementById('new-password');
+         const confirmPasswordInput = document.getElementById('confirm-password');
+
+         // Toggle mật khẩu hiển thị/ẩn
+         togglePasswordVisibility(toggleCurrentPassword, currentPasswordInput);
+         togglePasswordVisibility(toggleNewPassword, newPasswordInput);
+         togglePasswordVisibility(toggleConfirmPassword, confirmPasswordInput);
+
+         // Hàm để chuyển đổi giữa show và hide mật khẩu
+         function togglePasswordVisibility(toggleButton, passwordInput) {
+            toggleButton.addEventListener('click', function () {
+               if (passwordInput.type === 'password') {
+                     passwordInput.type = 'text';
+                     toggleButton.innerHTML = '<i class="fa fa-eye-slash"></i>';  // Thay đổi icon thành "ẩn"
+               } else {
+                     passwordInput.type = 'password';
+                     toggleButton.innerHTML = '<i class="fa fa-eye"></i>';  // Thay đổi icon thành "hiển thị"
+               }
+            });
          }
       });
 

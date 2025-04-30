@@ -69,6 +69,8 @@ Route::middleware('auth')->group(function () {
     // --------------------- Banner ---------------------
     Route::get('/banner', [BannerController::class, 'edit'])->name('banner.edit');
     Route::put('/banner/update', [BannerController::class, 'update'])->name('banner.update');
+
+    Route::post('/change-password',[LoginController::class, 'changePassword'])->name('change-password');
 });
 
 
