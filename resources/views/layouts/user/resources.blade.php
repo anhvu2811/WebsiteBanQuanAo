@@ -8,8 +8,7 @@
    <link rel="canonical" href="https://winehourse-theme.mysapo.net/">
    <meta name="revisit-after" content="1 days">
    <meta name="robots" content="noodp,index,follow">
-   <!-- ================= Favicon ================== -->
-   {{-- <link rel="shortcut icon" href="{{ asset('images/favicon.png') }}" type="image/x-icon"> --}}
+   
    <!-- Facebook Open Graph meta tags -->
    <meta property="og:type" content="website">
    <meta property="og:title" content="Giao diện mẫu Winehourse dành cho website dịch vụ thực phẩm, đồ uống">

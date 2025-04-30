@@ -2,7 +2,6 @@
 @section('content')
 <head>
    <title>{{ $setting->site_name ?? 'NULL' }} - Trang Chủ</title>
-   <link rel="icon" href="{{ asset('public/images/favicon.ico') }}" type="image/x-icon">
    <style>
       .home-slider {
          width: 100%;
