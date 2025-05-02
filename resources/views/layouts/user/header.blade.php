@@ -209,17 +209,17 @@
           <li class="menu-bar hidden-md hidden-lg">
              <img src="{{ asset('images/menu-bar.png') }}" alt="menu bar">
           </li>
-          <li class="nav-item hidden-sm hidden-xs active"><a class="nav-link" href="/">Trang chủ</a></li>
-          <li class="nav-item hidden-sm hidden-xs "><a class="nav-link" href="/about">Giới thiệu</a></li>
+          <li class="nav-item hidden-sm hidden-xs active"><a class="nav-link" href="{{ route('page.index') }}">Trang chủ</a></li>
+          <li class="nav-item hidden-sm hidden-xs "><a class="nav-link" href="{{ route('page.about') }}">Giới thiệu</a></li>
           <li class="nav-item logo inline-block">
              <a href="/" class="logo-wrapper ">					
              <img src="{{ asset('images/logo.png') }}" alt="logo ">					
              </a>
           </li>
           <li class="nav-item hidden-sm hidden-xs ">
-             <a href="/collections/all" class="nav-link">Sản phẩm</a>
+             <a href="{{ route('product.showAllProduct') }}" class="nav-link">Sản phẩm</a>
           </li>
-          <li class="nav-item hidden-sm hidden-xs "><a class="nav-link" href="/news">Tin tức</a></li>
+          <li class="nav-item hidden-sm hidden-xs "><a class="nav-link" href="{{ route('page.news' )}}">Tin tức</a></li>
           <li class="top-cart-contain f-right">
              <div class="mini-cart text-xs-center">
                 <div class="heading-cart">
