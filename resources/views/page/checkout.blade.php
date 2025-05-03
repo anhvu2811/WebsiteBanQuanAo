@@ -14,7 +14,7 @@
       <script src="{{ asset('checkout/js/checkout.vendor.min.js') }}"></script>
       <script src="{{ asset('checkout/js/checkout.min.js') }}"></script>
    </head>
-   @if(session('cart'))
+   @if(auth()->check() && $cartCount > 0)
       <body data-no-turbolink="">
          <header class="banner">
             <div class="wrap">
@@ -30,7 +30,7 @@
             <span class="wrap">
             <span class="order-summary-toggle__inner">
             <span class="order-summary-toggle__text expandable">
-               Đơn hàng ({{ count(session('cart')) }} sản phẩm)
+               Đơn hàng ({{ $cartCount }} sản phẩm)
             </span>
             <span class="order-summary-toggle__total-recap" data-bind="getTextTotalPrice()"></span>
             </span>
@@ -211,7 +211,7 @@
                   <aside class="sidebar">
                      <div class="sidebar__header">
                         <h2 class="sidebar__title">
-                           Đơn hàng ({{ count(session('cart')) }} sản phẩm)
+                           Đơn hàng ({{ $cartCount }} sản phẩm)
                         </h2>
                      </div>
                      <div class="sidebar__content">
@@ -237,22 +237,22 @@
                                        </tr>
                                     </thead>
                                     <tbody>
-                                       @php
-                                          $total = 0;
-                                       @endphp
-                                       @foreach(session('cart') as $cart)
+                                       @foreach($listCart as $cart)
                                           <tr class="product">
                                              <td class="product__image">
                                                    <div class="product-thumbnail">
                                                       <div class="product-thumbnail__wrapper" data-tg-static="">
-                                                         <img src="{{ asset('storage/'. $cart['image'])}}" alt="{{ $cart['name'] }}" class="product-thumbnail__image">
+                                                         @php
+                                                            $product = \App\Models\Product::find($cart->product_id);
+                                                         @endphp
+                                                         <img src="{{ asset('storage/'. $product->images->first()->image_url) }}" class="product-thumbnail__image">
                                                       </div>
                                                       <span class="product-thumbnail__quantity">{{ $cart['quantity'] }}</span>
                                                    </div>
                                              </td>
                                              <th class="product__description">
                                                    <span class="product__description__name">
-                                                      {{ $cart['name'] }}
+                                                      {{ $product->name }}
                                                       @php
                                                          $size = \App\Models\Size::find($cart['size_id']);
                                                       @endphp
@@ -261,12 +261,8 @@
                                              </th>
                                              <td class="product__quantity visually-hidden"><em>Số lượng:</em> {{ $cart['quantity'] }}</td>
                                              <td class="product__price">
-                                                   {{ number_format($cart['price'], 0, ',', '.') }}₫
+                                                   {{ number_format($cart['quantity'] * $cart['price'], 0, ',', '.') }}₫
                                              </td>
-                                             @php
-                                                   $itemTotal = $cart['quantity'] * $cart['price'];
-                                                   $total += $itemTotal;
-                                             @endphp
                                           </tr>
                                        @endforeach
                                     </tbody>

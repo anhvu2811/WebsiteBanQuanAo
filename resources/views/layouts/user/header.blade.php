@@ -225,9 +225,13 @@
                 <div class="heading-cart">
                    <a class="cart-icon" href="/cart">
                      <i class="fa fa-shopping-bag"></i>
-                     @if(session('cart') && count(session('cart')) > 0)
+                        @if(auth()->check())
+                           <span class="cartCount count_item_pr" id="cart-total">{{ $cartCount }}</span>
+                        @endif
+
+                     {{-- @if(session('cart') && count(session('cart')) > 0)
                         <span class="cartCount count_item_pr" id="cart-total">{{ count(session('cart')) }}</span>
-                     @endif
+                     @endif --}}
                    </a>
                 </div>
                 <div class="top-cart-content">
@@ -240,16 +244,7 @@
                             <li class="li-fix-1">
                                <div class="top-subtotal">
                                   Tổng tiền thanh toán: 
-                                  @if(session('cart'))
-                                    @php
-                                       $total = 0;
-                                    @endphp
-                                    @foreach(session('cart') as $cart)
-                                       @php
-                                          $itemTotal = $cart['quantity'] * $cart['price'];
-                                          $total += $itemTotal;
-                                       @endphp
-                                    @endforeach
+                                  @if(auth()->check())
                                     <span class="price">{{ number_format($total , 0, ',', '.') }}₫</span>
                                   @endif
                                </div>

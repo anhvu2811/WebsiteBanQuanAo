@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Mail\OrderEmail;
+use Carbon\Carbon;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\ProductSize;
-use Carbon\Carbon;
-use App\Mail\OrderEmail;
-use Illuminate\Support\Facades\Mail;
+use App\Models\CartItem;
 
 class OrderController extends Controller
 {
@@ -58,7 +60,9 @@ class OrderController extends Controller
         $order->notes = $request->input('note') ?? '';
         $order->save();
 
-        $cart = session('cart');
+        $userId = Auth::id();
+        $cart = CartItem::where('user_id', $userId)->get();
+
         foreach ($cart as $item) {
             $orderItem = new OrderItem();
             $orderItem->order_id = $order->id;
@@ -79,8 +83,8 @@ class OrderController extends Controller
         }
         
         Mail::to($request->input('email'))->send(new OrderEmail($cart, $order));
- 
-        session()->forget('cart');
+        CartItem::where('user_id', $userId)->update(['status' => 'purchased']);
+        
         return view('page.thankyou');
     }
 }

@@ -17,6 +17,8 @@ return new class extends Migration
             $table->unsignedInteger('product_id');
             $table->unsignedInteger('size_id');
             $table->integer('quantity');
+            $table->float('price');
+            $table->string('status')->default('pending');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('tbl_user')->onDelete('cascade');

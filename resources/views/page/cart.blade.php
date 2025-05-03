@@ -117,7 +117,7 @@
    <div class="container">
       <div class="box-heading">
          <h1 class="title-head page-title">Giỏ hàng</h1>
-         @if(session('cart'))
+         @if(auth()->check() && $cartCount > 0)
             <section style="background-color: white;">
                <table>
                   <thead>
@@ -127,18 +127,19 @@
                         <th>Size</th>
                         <th>Số lượng</th>
                         <th>Giá</th>
-                        <th>Tổng</th>
                         <th>Thao tác</th>
                      </tr>
                   </thead>
                   <tbody>
-                     @php
-                        $total = 0;
-                     @endphp
-                     @foreach(session('cart') as $id => $cart)
+                     @foreach($listCart as $cart)
                      <tr>
-                           <td><img src="{{ asset('storage/' . $cart['image']) }}" alt="{{ $cart['name'] }}" width="100"></td>
-                           <td>{{ $cart['name'] }}</td>
+                           @php
+                              $product = \App\Models\Product::find($cart->product_id);
+                           @endphp
+                           <td><img src="{{ asset('storage/' . $product->images->first()->image_url) }}" alt="{{ $product->name }}" width="100"></td>
+                           <td>
+                              {{ $product->name }}
+                           </td>
                            <td style="text-align: center; font-size: 15px;">
                               @php
                                  $size = \App\Models\Size::find($cart['size_id']);
@@ -148,21 +149,16 @@
                            <td>
                               <input type="number" value="{{ $cart['quantity'] }}" min="1" max="10" />
                            </td>
-                           <td>{{ number_format($cart['price'], 0, ',', '.') }}₫</td>
                            <td>
-                              @php
-                                 $itemTotal = $cart['quantity'] * $cart['price'];
-                                 $total += $itemTotal;
-                              @endphp
-                              {{ number_format($itemTotal , 0, ',', '.') }}₫
+                              {{ number_format($cart['quantity'] * $cart['price'], 0, ',', '.') }}₫
                            </td>
                            <td>
-                              <form action="{{ route('cart.remove', $id) }}" method="POST" style="text-align: center; margin-top: 30px;">
+                              <form action="{{ route('cart.remove', $cart->id) }}" method="POST" style="text-align: center; margin-top: 30px;">
                                  @csrf
                                  @method('DELETE')
                                  <button type="submit" class="btn btn-danger" style="border: none; background: none;">
                                     <i class="fa fa-times" style="font-size: 20px; color: #e8b34f; font-weight: bold;"></i>
-                                </button>
+                              </button>
                               </form>
                            </td>
                      </tr>

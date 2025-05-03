@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Setting;
+use App\Models\CartItem;
 
 class CartController extends Controller
 {
@@ -19,39 +21,42 @@ class CartController extends Controller
 
     public function addToCart(Request $request)
     {
-        $product = Product::find($request->product_id);
-        $cart = session()->get('cart', []);
-        $productExists = false;
-        foreach ($cart as &$item) {
-            if ($item['product_id'] == $request->product_id && $item['size_id'] == $request->size_id) {
-                $item['quantity'] += $request->quantity;
-                $productExists = true;
-                break;
-            }
+        if(!Auth::check()) {
+            return redirect()->route('login');
         }
-        if (!$productExists) {
-            $cart[] = [
+
+        $userId = Auth::id();
+        $product = Product::findOrFail($request->product_id);
+
+        $cartItem = CartItem::where('user_id', $userId)
+            ->where('product_id', $product->id)
+            ->where('size_id', intval($request->size_id))
+            ->first();
+
+        if ($cartItem) {
+            $cartItem->quantity += $request->quantity;
+            $cartItem->save();
+        } else {
+            CartItem::create([
+                'user_id'    => $userId,
                 'product_id' => $product->id,
-                'size_id' => $request->size_id,
-                'name' => $product->name,
-                'quantity' => $request->quantity,
-                'price' => $request->price,
-                'image' => $product->images->first()->image_url,
-            ];
+                'size_id'    => $request->size_id,
+                'quantity'   => $request->quantity,
+                'price'      => $request->price,
+            ]);
         }
-        session()->put('cart', $cart);
-        return redirect()->back()->with('success', 'Sản phẩm đã được thêm vào giỏ hàng!');
+
+        return redirect()->back()->with('success', 'Đã thêm vào giỏ hàng!');
     }
 
-    public function remove($index)
+    public function remove($id)
     {
-        $cart = session()->get('cart', []);
-        if (isset($cart[$index])) {
-            unset($cart[$index]);
+        $cartItem = CartItem::find($id);
+        if ($cartItem) {
+            $cartItem->delete();
+            return redirect()->back()->with('success', 'Sản phẩm đã được xóa khỏi giỏ hàng!');
         }
-        $cart = array_values($cart);
-        session()->put('cart', $cart);
-        return redirect()->back()->with('success', 'Sản phẩm đã được xóa khỏi giỏ hàng!');
+        return redirect()->back()->with('error', 'Không tìm thấy sản phẩm trong giỏ hàng!');
     }
 
     public function checkout()
