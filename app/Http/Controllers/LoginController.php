@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use App\Models\User;
+use App\Models\AuditLog;
 use App\Mail\ResetPasswordEmail;
 
 class LoginController extends Controller
@@ -90,6 +91,12 @@ class LoginController extends Controller
         }
         $user->update([
             'password' => Hash::make($newPass)
+        ]);
+        AuditLog::create([
+            'user_id' => $user->id,
+            'event' => 'change_password',
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
         ]);
         return response()->json([
             'status' => 'success',
