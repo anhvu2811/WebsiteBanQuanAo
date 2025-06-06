@@ -24,7 +24,7 @@ class ViewServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        View::composer(['layouts.user.header', 'page.cart', 'page.checkout'], function ($view) {
+        View::composer(['layouts.user.header', 'page.user.cart', 'page.user.checkout', 'layouts.header'], function ($view) {
             $cartCount = 0;
             $total = 0;
             $listCart = collect();

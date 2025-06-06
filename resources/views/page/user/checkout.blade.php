@@ -59,10 +59,10 @@
                                           <i class="fa fa-id-card-o fa-lg section__title--icon hide-on-desktop"></i>
                                           Thông tin nhận hàng
                                        </h2>
-                                       <a href="/account/login?returnUrl=/checkout/79af46f94aa94a97b6be6e3008137981">
+                                       {{-- <a href="/account/login?returnUrl=/checkout/79af46f94aa94a97b6be6e3008137981">
                                        <i class="fa fa-user-circle-o fa-lg"></i>
                                        <span>Đăng nhập </span>
-                                       </a>
+                                       </a> --}}
                                     </div>
                                  </div>
                                  <div class="section__content">

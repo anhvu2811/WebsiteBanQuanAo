@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\AuditLog;
-use App\Mail\ResetPasswordEmail;
+use App\Jobs\SendResetPasswordEmail;
+use Illuminate\Foundation\Bus\Dispatchable;
 
 class LoginController extends Controller
 {
@@ -36,10 +37,14 @@ class LoginController extends Controller
         if (Auth::attempt(['email' => $email, 'password' => $password])) {
             $user = auth()->user();
             switch ($user->role) {
-                case User::ROLE_USER:
+                case User::ROLE_CUSTOMER:
                     return redirect()->route('page.index');
                 case User::ROLE_ADMIN:
-                    return redirect()->route('product.index');
+                    return redirect()->route('admin.dashboard');
+                case User::ROLE_SELLER:
+                    return redirect()->route('admin.dashboard');
+                default:
+                    return redirect()->route('login');
             }
         }
 
@@ -65,7 +70,7 @@ class LoginController extends Controller
         $hashPassword = Hash::make($newPassword);
         $user->update(['password' => $hashPassword]);
 
-        Mail::to($email)->send(new ResetPasswordEmail($user->name, $newPassword));
+        SendResetPasswordEmail::dispatch($email, $user->name, $newPassword);
         session()->flash('status', 'Mật khẩu mới đã được gửi vào email của bạn.');
         return redirect()->route('login');
     }
@@ -98,9 +103,12 @@ class LoginController extends Controller
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Password updated successfully'
-        ]);
+
+        // return response()->json([
+        //     'status' => 'success',
+        //     'message' => 'Password updated successfully'
+        // ]);
+        
+        return redirect()->back()->with('success', 'Password changed successfully!');
     }
 }

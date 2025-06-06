@@ -16,7 +16,7 @@ class CartController extends Controller
     public function cart()
     {
         $setting = Setting::first();
-        return view('page.cart', compact('setting'));
+        return view('page.user.cart', compact('setting'));
     }
 
     public function addToCart(Request $request)
@@ -61,7 +61,7 @@ class CartController extends Controller
 
     public function checkout()
     {
-        return view('page.checkout');
+        return view('page.user.checkout');
     }
 
 

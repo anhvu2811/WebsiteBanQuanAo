@@ -9,6 +9,11 @@ class Product extends Model
 {
     use HasFactory;
     protected $table = 'tbl_product';
+    
+    const GENDER_MALE = 1;
+    const GENDER_FAMALE = 0;
+    const GENDER_UNISEX = 2;
+
     protected $fillable =  [
         'id',
         'name',

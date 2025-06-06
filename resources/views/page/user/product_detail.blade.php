@@ -402,6 +402,6 @@
 
    </script>
 
-    @include('page/list_brands');
+    @include('page/user/list_brands');
 </div>
 @endsection

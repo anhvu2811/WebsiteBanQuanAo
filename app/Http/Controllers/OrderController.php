@@ -11,6 +11,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\ProductSize;
 use App\Models\CartItem;
+use App\Jobs\SendOrderEmail;
 
 class OrderController extends Controller
 {
@@ -21,7 +22,7 @@ class OrderController extends Controller
     {
         $perPage = $request->get('perPage', 10);
         $orders = Order::paginate($perPage);
-        return view('order.index')->with('orders', $orders);
+        return view('page.admin.order.index')->with('orders', $orders);
     }
 
 
@@ -82,9 +83,9 @@ class OrderController extends Controller
             }
         }
         
-        Mail::to($request->input('email'))->send(new OrderEmail($cart, $order));
+        SendOrderEmail::dispatch($request->input('email'), $cart, $order);
+
         CartItem::where('user_id', $userId)->update(['status' => 'purchased']);
-        
-        return view('page.thankyou');
+        return view('page.user.thankyou');
     }
 }

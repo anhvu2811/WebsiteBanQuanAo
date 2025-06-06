@@ -58,20 +58,19 @@
         text-align: center;
     }
 
-
 </style>
 <table class="table table-striped table-bordered" style="text-align:center;">
     <thead class="thead-dark">
         <tr>
             <th>STT</th>
             <th>Image</th>
-            <th>Name</th>
+            <th>Product name</th>
             <th>Description</th>
             <th>Material</th>
             <th>Price</th>
-            <th>Category</th>
+            <th>Loại</th>
             <th>Created at</th>
-            <th colspan="3">Actions</th>
+            <th colspan="3">Action</th>
         </tr>
     </thead>
     <tbody>
@@ -86,7 +85,7 @@
                 <td>
                     {{ '#'.$products->firstItem() + $index }}
                 </td>
-                <td style="width: 200px;">
+                <td style="max-width: 150px;">
                     @if ($product->images->isNotEmpty())
                         <img src="{{ asset('storage/' . $product->images->first()->image_url) }}" alt="Ảnh sản phẩm" style="max-width: 100%; max-height: 100px; object-fit: contain;">
                     @else
@@ -98,19 +97,21 @@
                 <td>{{ $product->material }}</td>
                 <td>{{ number_format($product->price, 0, ',', '.') }}</td>
                 <td>{{ $product->category->name }}</td>
-                <td>{{ Carbon::parse($product->created_at)->format('d/m/Y H:i:s') }}</td>
+                <td style="max-width: 50px;">{{ Carbon::parse($product->created_at)->format('d/m/Y H:i:s') }}</td>
                 <td>
-                    <a href="javascript:void(0);" class="show-sizes" data-product-id="{{ $product->id }}">Show list sizes</a>
-                </td>
-                <td>
-                    <a href="{{ route('product.edit', ['id' => $product->id]) }}">Update</a>
-                </td>
-                <td>
-                    <form action="{{ route('product.destroy', ['id' => $product->id]) }}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" onclick="return confirm('Are you sure you want to delete this product?')">Delete</button>
-                    </form>
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                        <div>
+                            <a href="javascript:void(0);" class="show-sizes" data-product-id="{{ $product->id }}">Show list sizes</a>
+                        </div>
+                        <div style="display: flex;">
+                            <a href="{{ route('product.edit', ['id' => $product->id]) }}">Update</a>
+                            <form action="{{ route('product.destroy', ['id' => $product->id]) }}" method="POST" style="display: inline; margin-left: 10px;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" onclick="return confirm('Are you sure you want to delete this product?')">Delete</button>
+                            </form>
+                        </div>
+                    </div>
                 </td>
             </tr>
         @endforeach

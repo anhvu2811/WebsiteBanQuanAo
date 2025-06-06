@@ -19,7 +19,8 @@
          </div>
       </div>
    </section>
-   <div class="container">
+   <p style="text-align:center; ">COMING SOON</p>
+   {{-- <div class="container">
       <div class="box-heading">
          <h1 class="title-head page-title">Tin tức</h1>
       </div>
@@ -206,7 +207,7 @@
             </div>
          </aside>
       </div>
-   </div>
-   @include('page/list_brands');
+   </div> --}}
+   @include('page/user/list_brands');
 </div>
 @endsection

@@ -13,6 +13,7 @@ use App\Models\Trending;
 use App\Models\Setting;
 use App\Models\Banner;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class ProductController extends Controller
 {
@@ -20,19 +21,26 @@ class ProductController extends Controller
     {
         $perPage = $request->get('perPage', 10);
         $search = $request->get('search', '');
-        $sortPrice = $request->get('sortPrice', 'asc');
-        $products = Product::where('name', 'like', "%$search%")
-                        ->orderBy('price', $sortPrice)
-                        ->with('images')
-                        ->paginate($perPage);
+        $sortPrice = $request->get('sortPrice');
+        $sortName = $request->get('sortName');
+        
+        $productsQuery = Product::where('name', 'like', "%$search%")->with('images');
 
-        return view('product.index',compact('products'));
+        if ($sortName) {
+            $productsQuery->orderBy('name', $sortName);
+        }
+        if ($sortPrice) {
+            $productsQuery->orderBy('price', $sortPrice);
+        }
+        $products = $productsQuery->paginate($perPage);
+
+        return view('page.admin.product.index', compact('products'));
     }
     
     public function create()
     {
         $category = Category::all();
-        return view('product.create', compact('category'));
+        return view('page.admin.product.create', compact('category'));
     }
 
     public function store(Request $request)
@@ -42,6 +50,7 @@ class ProductController extends Controller
         $product->description  = $request->input('description');
         $product->material     = $request->input('material');
         $product->price        = $request->input('price');
+        $product->gender        = $request->input('gender');
         $product->category_id  = $request->input('category_id');
         $product->save();
 
@@ -81,7 +90,7 @@ class ProductController extends Controller
         $product = Product::findOrFail($id)->load('category');
         $productImages = ProductImage::where('product_id', $product->id)->get();
         $productSizes = ProductSize::where('product_id', $product->id)->get();
-        return view('product.update', compact('product', 'category', 'productImages', 'productSizes'));
+        return view('page.admin.product.update', compact('product', 'category', 'productImages', 'productSizes'));
     }
 
     public function update(Request $request, string $id)
@@ -159,16 +168,16 @@ class ProductController extends Controller
         $products = Product::paginate($perPage);
         $maleCate = Category::join('tbl_product', 'tbl_category.id', '=', 'tbl_product.category_id')
                             ->select('tbl_category.id', 'tbl_category.name', \DB::raw('COUNT(tbl_product.id) as product_count'))
-                            ->where('tbl_product.gender', 1)
+                            ->where('tbl_product.gender', Product::GENDER_MALE)
                             ->groupBy('tbl_category.id', 'tbl_category.name')
                             ->get();
 
         $famaleCate = Category::join('tbl_product', 'tbl_category.id', '=', 'tbl_product.category_id')
                             ->select('tbl_category.id', 'tbl_category.name', \DB::raw('COUNT(tbl_product.id) as product_count'))
-                            ->where('tbl_product.gender', 0)
+                            ->where('tbl_product.gender', Product::GENDER_FAMALE)
                             ->groupBy('tbl_category.id', 'tbl_category.name')
                             ->get();
-        return view('page.collections', compact('products', 'maleCate', 'famaleCate', 'setting'));
+        return view('page.user.collections', compact('products', 'maleCate', 'famaleCate', 'setting'));
     }
 
     public function showCategoryProducts(Request $request, $gender, $categoryName) 
@@ -197,7 +206,7 @@ class ProductController extends Controller
                             ->groupBy('tbl_category.id', 'tbl_category.name')
                             ->get();
 
-        return view('page.collections', compact('products', 'maleCate', 'famaleCate', 'setting'));
+        return view('page.user.collections', compact('products', 'maleCate', 'famaleCate', 'setting'));
     }
 
     public function getHotTrendProducts()
@@ -226,7 +235,7 @@ class ProductController extends Controller
         $bannerMain = Banner::where('type', 'main')->get();
         $bannerSub = Banner::where('type', 'sub')->get();
 
-        return view('page.index', compact('hotTrendProducts', 'listLatestProducts', 'bestSellingProducts', 'setting', 'bannerMain', 'bannerSub'));
+        return view('page.user.index', compact('hotTrendProducts', 'listLatestProducts', 'bestSellingProducts', 'setting', 'bannerMain', 'bannerSub'));
     }
 
     public function getProductDetail($id)
@@ -236,7 +245,7 @@ class ProductController extends Controller
         $getRelatedProducts = Product::where('category_id', '=', $product->category_id)
                                     ->where('id', '!=', $product->id)
                                     ->get();
-        return view('page.product_detail', compact('product', 'setting', 'getRelatedProducts'));
+        return view('page.user.product_detail', compact('product', 'setting', 'getRelatedProducts'));
     }
 
     public function deleteProductImage($id)
@@ -342,7 +351,7 @@ class ProductController extends Controller
                             ->where('tbl_product.gender', 0)
                             ->groupBy('tbl_category.id', 'tbl_category.name')
                             ->get();
-        return view('page.collections', compact('products', 'maleCate', 'famaleCate', 'setting'));
+        return view('page.user.collections', compact('products', 'maleCate', 'famaleCate', 'setting'));
     }
 
 }

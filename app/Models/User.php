@@ -48,6 +48,22 @@ class User extends Authenticatable
         ];
     }
 
-    const ROLE_USER = 0;
-    const ROLE_ADMIN = 1;
+    const ROLE_CUSTOMER = 0;
+    const ROLE_SELLER = 1;
+    Const ROLE_ADMIN = 2;
+
+    public function isCustomer()
+    {
+        return $this->role === self::ROLE_CUSTOMER;
+    }
+
+    public function isSeller()
+    {
+        return $this->role === self::ROLE_SELLER;
+    }
+
+    public function isAdmin()
+    {
+        return $this->role === self::ROLE_ADMIN;
+    }
 }

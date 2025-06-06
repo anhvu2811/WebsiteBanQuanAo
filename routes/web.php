@@ -10,6 +10,8 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\EmailController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Middleware\CheckRole;
 
 Route::get('/', [ProductController::class, 'getHotTrendProducts'])->name('page.index');
 Route::get('/about', [SettingController::class, 'displayAbout'])->name('page.about');
@@ -36,6 +38,11 @@ Route::get('/checkoutt', [CartController::class, 'checkout'])->name('cart.checko
 Route::post('/reset-password', [LoginController::class, 'resetPassword'])->name('reset-password');
 
 Route::middleware('auth')->group(function () {
+    Route::middleware([CheckRole::class . ':admin,seller'])->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
+        Route::get('/product', [DashboardController::class, 'product'])->name('admin.product');
+    });
+    
     // --------------------- Category ---------------------
     Route::get('/category', [CategoryController::class, 'index'])->name('category.index');
     Route::get('/category/create', [CategoryController::class, 'create'])->name('category.create');
@@ -72,6 +79,4 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/change-password',[LoginController::class, 'changePassword'])->name('change-password');
 });
-
-
 

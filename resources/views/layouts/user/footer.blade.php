@@ -102,8 +102,8 @@
           <div class="inner clearfix">
              <div class="row">
                 <div class="col-sm-8 a-left">
-                   <span>© Bản quyền thuộc về <b>Awesome Team</b> <span class="fix-xs-footer">|</span> Cung cấp bởi 
-                   <a href="https://www.sapo.vn/?utm_campaign=cpn:kho_theme-plm:footer&amp;utm_source=Tu_nhien&amp;utm_medium=referral&amp;utm_content=fm:text_link-km:-sz:&amp;utm_term=&amp;campaign=kho_theme-sapo" rel="nofollow" title="Sapo" target="_blank">Sapo</a>
+                   <span>© Bản quyền thuộc về <b>WineHouse</b> <span class="fix-xs-footer">|</span> Cung cấp bởi 
+                   <a href="#">AV Team</a>
                    </span>
                 </div>
                 <div class="col-sm-4 a-left hidden-xs">
