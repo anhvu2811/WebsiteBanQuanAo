@@ -93,7 +93,8 @@
                     @endif
                 </td>
                 <td>{{ $product->name }}</td>
-                <td>{{ $product->description }}</td>
+                <td>{!! $product->description !!}</td>
+                {{-- <td>{{ $product->description }}</td> --}}
                 <td>{{ $product->material }}</td>
                 <td>{{ number_format($product->price, 0, ',', '.') }}</td>
                 <td>{{ $product->category->name }}</td>

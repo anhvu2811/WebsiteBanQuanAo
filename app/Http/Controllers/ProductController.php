@@ -14,6 +14,7 @@ use App\Models\Setting;
 use App\Models\Banner;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use App\Http\Requests\ProductRequest;
 
 class ProductController extends Controller
 {
@@ -43,15 +44,17 @@ class ProductController extends Controller
         return view('page.admin.product.create', compact('category'));
     }
 
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
+        $validated = $request->validated();
+
         $product = new Product();
-        $product->name         = $request->input('name');
-        $product->description  = $request->input('description');
-        $product->material     = $request->input('material');
-        $product->price        = $request->input('price');
-        $product->gender        = $request->input('gender');
-        $product->category_id  = $request->input('category_id');
+        $product->name         = $validated['name'];
+        $product->description = $validated['description'] ?? null;
+        $product->material    = $validated['material'] ?? null;
+        $product->price       = $validated['price'];
+        $product->gender      = $validated['gender'];
+        $product->category_id = $validated['category_id'];
         $product->save();
 
         foreach($request->sizes as $sizeData) {

@@ -180,35 +180,61 @@
         @csrf
         <div class="form-columns">
             <div class="form-column">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" placeholder="Enter product name" required>
-
-                <label for="price">Price</label>
-                <input type="text" id="price" name="price" placeholder="Enter price" required>
-
-                <label for="gender">Gender</label>
-                <select name="gender">
-                    <option value="" hidden selected>--Chọn giới tính--</option>
-                    <option value="1">Nam</option>
-                    <option value="0">Nữ</option>
-                    <option value="2">Unisex</option>
-                </select>
-
-                <label for="category_name">Category</label>
-                <select name="category_id">
-                    <option value="" hidden selected>--Chọn loại--</option>
-                    @foreach($category as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                    @endforeach
-                </select>
+                <div>
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" placeholder="Enter product name" value="{{ old('name') }}" required>
+                    @error('name')
+                        <small class="text-danger">{{ $message }}</small>
+                    @enderror
+                </div>
+                <div>
+                    <label for="price">Price</label>
+                    <input type="number" id="price" name="price" placeholder="Enter price"  value="{{ old('price') }}" min="0" required>
+                    @error('price')
+                        <small class="text-danger">{{ $message }}</small>
+                    @enderror
+                </div>
+                <div>
+                    <label for="gender">Gender</label>
+                    <select name="gender">
+                        <option value="" hidden {{ old('gender') ? '' : 'selected' }}>--Chọn giới tính--</option>
+                        <option value="1" {{ old('gender') == '1' ? 'selected' : '' }}>Nam</option>
+                        <option value="0" {{ old('gender') == '0' ? 'selected' : '' }}>Nữ</option>
+                        <option value="2" {{ old('gender') == '2' ? 'selected' : '' }}>Unisex</option>
+                    </select>
+                    @error('gender')
+                        <small class="text-danger">{{ $message }}</small>
+                    @enderror
+                </div>
+                <div>
+                    <label for="category_name">Category</label>
+                    <select name="category_id">
+                        <option value="" hidden {{ old('category_id') ? '' : 'selected' }}>--Chọn loại--</option>
+                        @foreach($category as $category)
+                            <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('category_id')
+                        <small class="text-danger">{{ $message }}</small>
+                    @enderror
+                </div>
             </div>
-
             <div class="form-column">
-                <label for="material">Material</label>
-                <input type="text" id="material" name="material" placeholder="Enter material" required>
-
-                <label for="description">Description</label>
-                <textarea id="description" name="description" placeholder="Enter description" rows="12" required style="margin-left: 5px;"></textarea>
+                <div>
+                    <label for="material">Material</label>
+                    <input type="text" id="material" name="material" placeholder="Enter material" value="{{ old('material') }}" required>
+                    @error('material')
+                        <small class="text-danger">{{ $message }}</small>
+                    @enderror
+                </div>
+                <div>
+                    <label for="description">Description</label>
+                    {{-- <textarea id="description" name="description" placeholder="Enter description" rows="12" required style="margin-left: 5px;">{{ old('description') }}</textarea> --}}
+                    <textarea id="description" name="description" placeholder="Enter description" rows="12" required style="margin-left: 5px;">{{ old('description') }}</textarea>
+                    @error('description')
+                        <small class="text-danger">{{ $message }}</small>
+                    @enderror
+                </div>
             </div>
         </div>
         <hr>
@@ -219,11 +245,17 @@
                     <div class="size-row">
                         <div class="size-input">
                             <label>Size</label>
-                            <input type="text" name="sizes[0][size_name]" placeholder="e.g., S, M, L" required>
+                            <input type="text" name="sizes[0][size_name]" placeholder="e.g., S, M, L" value={{ old('sizes.0.size_name')}} required>
+                            @error('sizes.0.size_name')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
                         </div>
                         <div class="size-input">
                             <label>Stock Quantity</label>
-                            <input type="number" name="sizes[0][stock_quantity]" placeholder="e.g., 100" min="0" required>
+                            <input type="number" name="sizes[0][stock_quantity]" placeholder="e.g., 100" min="0" value={{ old('sizes.0.stock_quantity')}} required>
+                            @error('sizes.0.stock_quantity')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
                         </div>
                         <button type="button" class="remove-size">Remove</button>
                     </div>
@@ -279,7 +311,7 @@
                             <input 
                                 type="text" 
                                 name="sizes[${sizeIndex}][size_name]" 
-                                placeholder="e.g., S, M, L" 
+                                placeholder="e.g., S, M, L"
                                 required>
                         </div>
                         <div class="size-input">
@@ -288,7 +320,7 @@
                                 type="number" 
                                 name="sizes[${sizeIndex}][stock_quantity]" 
                                 placeholder="e.g., 100" 
-                                min="0" 
+                                min="0"
                                 required>
                         </div>
                         <button type="button" class="remove-size">Remove</button>
@@ -344,4 +376,46 @@
             });
         });
     </script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/38.1.0/classic/ckeditor.js"></script>
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#description'), {
+                toolbar: [
+                    'heading', '|',
+                    'bold', 'italic', 'underline', 'strikethrough', '|',
+                    'fontColor', 'fontBackgroundColor', '|',
+                    'link', 'bulletedList', 'numberedList', '|',
+                    'undo', 'redo'
+                ],
+                fontColor: {
+                    colors: [
+                        {
+                            color: 'hsl(0, 0%, 0%)',
+                            label: 'Black'
+                        },
+                        {
+                            color: 'hsl(0, 75%, 60%)',
+                            label: 'Red'
+                        },
+                        {
+                            color: 'hsl(30, 75%, 60%)',
+                            label: 'Orange'
+                        },
+                        {
+                            color: 'hsl(60, 75%, 60%)',
+                            label: 'Yellow'
+                        },
+                        {
+                            color: 'hsl(90, 75%, 60%)',
+                            label: 'Light Green'
+                        },
+                        // Thêm màu tùy ý
+                    ]
+                }
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
+
 @endpush

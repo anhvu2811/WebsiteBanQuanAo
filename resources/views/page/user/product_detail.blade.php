@@ -1,7 +1,7 @@
 @extends('layouts/user/layoutmaster')
 @section('content')
 <head>
-   <title> {{ $setting->site_name ?? 'NULL' }} - Chi Tiết Sản Phẩm </title>
+   <title> {{ strtoupper($product->name) }} - {{ $setting->site_name ?? 'NULL' }} </title>
    <style>
       .btn-size.selected {
          background-color: #e8b34f;
@@ -116,7 +116,7 @@
                      <div class="product_description margin-bottom-20">
                         <label>Mô tả: </label>
                         <div class="rte description">
-                              {{ $product->description ?? 'NULL' }}
+                              {!! $product->description !!}
                         </div>
                      </div>
                      <div class="product_description margin-bottom-20">

@@ -92,7 +92,7 @@
                         </div>
                      @endif
                     <div class="action_bottom">
-                       <input class="btn  btn-primary" style="margin-top: 25px;" type="submit" value="Lấy lại mật khẩu">
+                       <input class="btn  btn-primary" style="margin-top: 25px;" type="submit" value="Đặt lại mật khẩu">
                     </div>
                  </form>
               </div>
