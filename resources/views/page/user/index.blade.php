@@ -104,10 +104,10 @@
          </script>
 
     </section>
-    <section class="awe-section-2" data-aos="fade-left">
+    {{-- <section class="awe-section-2" data-aos="fade-left">
         <div class="container">
            <div class="row">
-               {{-- @foreach($bannerSub as $bannerSub)
+               @foreach($bannerSub as $bannerSub)
                   <div class="col-sm-6">
                      <a href="#" class="img1 img_1 inline-block">
                         <picture>
@@ -119,10 +119,10 @@
                         </picture>
                      </a>
                   </div>
-               @endforeach --}}
+               @endforeach
            </div>
         </div>
-    </section>
+    </section> --}}
     <section class="awe-section-3" data-aos="fade-right">
         <div class="section section-deal products-view-grid">
            <div class="container">
@@ -142,7 +142,7 @@
                                           {{ $hotTrendProduct->product->discount->discount_level }}% 
                                        </div>
                                     @endif
-                                    <a href="/collections/{{ $hotTrendProduct->product->id }}" title="Rượu Remy Martin CLUB">
+                                    <a href="/collections/{{ $hotTrendProduct->product->id }}" title="{{ $hotTrendProduct->product->name }}">
                                        <picture>
                                           <source media="(min-width: 1200px)" srcset="{{ asset('storage/' . $hotTrendProduct->product->images->first()->image_url) }}">
                                           <source media="(min-width: 992px)" srcset="{{ asset('storage/' . $hotTrendProduct->product->images->first()->image_url) }}">
@@ -336,7 +336,7 @@
                                                    {{ $product->discount->discount_level }}% 
                                                 </div>
                                              @endif
-                                             <a href="/collections/{{ $product->id }}" title="Rượu Remy Martin CLUB">
+                                             <a href="/collections/{{ $product->id }}" title="{{ $product->name }}">
                                                 <picture>
                                                    <source media="(min-width: 1200px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
                                                    <source media="(min-width: 992px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
@@ -453,7 +453,7 @@
                                                       {{ $product->discount->discount_level }}% 
                                                    </div>
                                                 @endif
-                                                <a href="/collections/{{ $product->id }}" title="Rượu Remy Martin CLUB">
+                                                <a href="/collections/{{ $product->id }}" title="{{ $product->name }}">
                                                    <picture>
                                                       <source media="(min-width: 1200px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
                                                       <source media="(min-width: 992px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
