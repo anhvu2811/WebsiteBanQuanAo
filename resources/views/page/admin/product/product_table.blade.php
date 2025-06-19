@@ -76,7 +76,7 @@
     <tbody>
         @if($products->isEmpty())
             <tr>
-                <td colspan="9">No products found</td>
+                <td colspan="9" style="text-align: center; font-style: oblique; color: gray;">No products found</td>
             </tr>
         @endif
 
