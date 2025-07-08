@@ -210,8 +210,8 @@
                            @foreach($maleCate as $category)
                               <li class="nav-item">
                                  <i class="fa fa-caret-right"></i>
-                                 <a class="nav-link" href="{{ route('product.productByCategory', ['gender' => 'male', 'categoryName' => $category->name]) }}">
-                                    {{ $category->name }} <small>({{ $category->product_count }})</small>
+                                 <a class="nav-link" href="{{ route('product.productByCategory', ['gender' => 'male', 'categoryName' => $category->name]) }}" style="text-transform: uppercase;">
+                                    {{ $category->name }} <small style="color: #808080">({{ $category->product_count }})</small>
                                  </a>
                               </li>
                         @endforeach
@@ -231,8 +231,8 @@
                            @foreach($famaleCate as $category)
                               <li class="nav-item">
                                  <i class="fa fa-caret-right"></i>
-                                 <a class="nav-link" href="{{ route('product.productByCategory', ['gender' => 'famale', 'categoryName' => $category->name]) }}">
-                                    {{ $category->name }} <small>({{ $category->product_count }})</small>
+                                 <a class="nav-link" href="{{ route('product.productByCategory', ['gender' => 'famale', 'categoryName' => $category->name]) }}" style="text-transform: uppercase;">
+                                    {{ $category->name }} <small style="color: #808080">({{ $category->product_count }})</small>
                               </a>
                               </li>
                            @endforeach
