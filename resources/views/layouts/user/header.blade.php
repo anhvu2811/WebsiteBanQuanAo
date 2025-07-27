@@ -331,12 +331,15 @@
          var btn = document.getElementById("change-password-btn");
          var closeModal = document.getElementById("close-modal");
 
-         btn.onclick = function() {
-            modal.style.display = "block";
+         if(btn && modal) {
+            btn.onclick = function() {
+               modal.style.display = "block";
+            }
          }
-
-         closeModal.onclick = function() {
-            modal.style.display = "none";
+         if(closeModal && modal) {
+            closeModal.onclick = function() {
+               modal.style.display = "none";
+            }
          }
 
          window.onclick = function(event) {
