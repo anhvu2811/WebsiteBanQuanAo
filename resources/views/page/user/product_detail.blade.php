@@ -369,7 +369,7 @@
                sizeInput.value = selectedSize;
 
                const productId = this.getAttribute('data-product-id');
-               fetch(`/product/checkquanity/${productId}/${selectedSize}`)
+               fetch(`/api/v1/checkquanity/${productId}/${selectedSize}`)
                      .then(response => response.json())
                      .then(data => {
                         const quantityDisplay = document.querySelector('.products-available');

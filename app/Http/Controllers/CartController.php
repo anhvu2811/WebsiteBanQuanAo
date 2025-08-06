@@ -13,6 +13,7 @@ class CartController extends Controller
     /**
      * Display a listing of the resource.
      */
+
     public function cart()
     {
         $setting = Setting::first();
@@ -61,7 +62,8 @@ class CartController extends Controller
 
     public function checkout()
     {
-        return view('page.user.checkout');
+        $user = Auth()->user();
+        return view('page.user.checkout', compact('user'));
     }
 
 

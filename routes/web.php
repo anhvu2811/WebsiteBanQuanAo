@@ -21,8 +21,6 @@ Route::get('/collections/all', [ProductController::class, 'collections'])->name(
 Route::get('/collections/{id}', [ProductController::class, 'getProductDetail'])->name('product.getProductDetail');
 Route::get('/collections/{gender}/{categoryName}', [ProductController::class, 'showCategoryProducts'])->name('product.productByCategory');
 
-Route::get('/product/checkquanity/{productId}/{sizeId}', [ProductController::class, 'checkSizeQuanity']);
-
 // --------------------- Login ---------------------
 Route::post('/account/login', [LoginController::class, 'login'])->name('login.index');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
@@ -78,9 +76,3 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/change-password',[LoginController::class, 'changePassword'])->name('change-password');
 });
-
-
- //
-Route::get('/get-categories', [ProductController::class, 'getCategories'])->name('product.getCategories');
-Route::get('/setting', [ProductController::class, 'setting'])->name('header.setting');
-Route::get('/get-products', [ProductController::class, 'getProducts'])->name('product.get-products');

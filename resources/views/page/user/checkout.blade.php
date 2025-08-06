@@ -72,13 +72,13 @@
                                              <label for="email" class="field__label">
                                              Email
                                              </label>
-                                             <input name="email" id="email" type="email" class="field__input" data-bind="email" value="">
+                                             <input name="email" id="email" type="email" class="field__input" data-bind="email" value="{{ $user->email }}" style="background-color: #f0f8ff;" readonly>
                                           </div>
                                        </div>
                                        <div class="field " data-bind-class="{'field--show-floating-label': billing.name}">
                                           <div class="field__input-wrapper">
                                              <label for="billingName" class="field__label">Họ và tên</label>
-                                             <input name="billingName" id="billingName" type="text" class="field__input" data-bind="billing.name" value="">
+                                             <input name="billingName" id="billingName" type="text" class="field__input" data-bind="billing.name" value="{{ $user->name }}" style="background-color: #f0f8ff;" readonly>
                                           </div>
                                        </div>
                                        <div class="field " data-bind-class="{'field--show-floating-label': billing.phone}">
@@ -86,7 +86,7 @@
                                              <label for="billingPhone" class="field__label">
                                              Số điện thoại
                                              </label>
-                                             <input name="billingPhone" id="billingPhone" type="tel" class="field__input" data-bind="billing.phone" value="">
+                                             <input name="billingPhone" id="billingPhone" type="tel" class="field__input" data-bind="billing.phone" value="{{ $user->phone }}" style="background-color: #f0f8ff;" readonly>
                                              {{-- <div class="field__input-phone-region-wrapper">
                                                 <select class="field__input select-phone-region" name="billingPhoneRegion" data-init-value="VN"></select>
                                              </div> --}}
@@ -97,7 +97,7 @@
                                              <label for="billingAddress" class="field__label">
                                              Địa chỉ
                                              </label>
-                                             <input name="billingAddress" id="billingAddress" type="text" class="field__input" data-bind="billing.address" value="">
+                                             <input name="billingAddress" id="billingAddress" type="text" class="field__input" data-bind="billing.address" value="{{ $user->delivery_address }}" style="background-color: #f0f8ff;" readonly>
                                           </div>
                                        </div>
                                        {{-- <div class="field field--show-floating-label ">

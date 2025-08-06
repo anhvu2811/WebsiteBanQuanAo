@@ -86,6 +86,7 @@ class OrderController extends Controller
         SendOrderEmail::dispatch($request->input('email'), $cart, $order);
 
         CartItem::where('user_id', $userId)->update(['status' => 'purchased']);
-        return view('page.user.thankyou', compact('order_id', $order->id));
+        $orderId = $order->id;
+        return view('page.user.thankyou', compact('order_id'));
     }
 }

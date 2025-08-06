@@ -15,7 +15,12 @@
       }
    }
    /* Container skeleton */
-   .skeleton { background: #f3f3f3; border-radius: 5px; overflow: hidden; position: relative; }
+   .skeleton { 
+      background: #f3f3f3; 
+      border-radius: 5px; 
+      overflow: hidden; 
+      position: relative; 
+   }
 
    /* Shimmer animation */
    .skeleton::after {
