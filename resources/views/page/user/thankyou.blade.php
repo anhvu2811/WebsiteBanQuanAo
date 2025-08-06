@@ -1,6 +1,6 @@
 <?php
     use App\Models\Order;
-    $order = Order::orderBy('id', 'desc')->first();
+    $order = Order::where('id', $order_id)->first();
 ?>
 <style>
     .order-success-page {
@@ -146,7 +146,7 @@
                     <div class="thank-you-section text-center">
                         <p class="thank-you-msg">Cảm ơn bạn đã mua sắm tại Winehouse!</p>
                         <a href="{{ url('/') }}" class="btn btn-primary">Quay về trang chủ</a>
-                        <a href="{{ route('product.showAllProduct') }}" class="btn btn-info">Xem sản phẩm khác</a>
+                        <a href="{{ route('product.collections') }}" class="btn btn-info">Xem sản phẩm khác</a>
                     </div>
                 </div>
             </div>

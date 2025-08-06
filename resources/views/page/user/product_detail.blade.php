@@ -1,7 +1,7 @@
 @extends('layouts/user/layoutmaster')
+@section('page_title', strtoupper($product->name))
 @section('content')
 <head>
-   <title> {{ strtoupper($product->name) }} - {{ $setting->site_name ?? 'NULL' }} </title>
    <style>
       .btn-size.selected {
          background-color: #e8b34f;

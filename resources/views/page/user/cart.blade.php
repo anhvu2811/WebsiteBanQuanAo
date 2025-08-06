@@ -1,7 +1,7 @@
 @extends('layouts/user/layoutmaster')
+@section('page_title', 'Giỏ Hàng')
 @section('content')
 <head>
-   <title> {{ $setting->site_name ?? 'NULL' }} - Giỏ Hàng </title>
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
    <style>
       .box-heading {
@@ -176,7 +176,7 @@
               </a>
             </div>
          @else
-            <p>Không có sản phẩm nào trong giỏ hàng. Quay lại cửa hàng để tiếp tục mua sắm.</p>
+            <p>Không có sản phẩm nào trong giỏ hàng.</p>
          @endif
       </div>
    </div>

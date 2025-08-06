@@ -10,9 +10,9 @@ class Product extends Model
     use HasFactory;
     protected $table = 'tbl_product';
     
-    const GENDER_MALE = 1;
-    const GENDER_FAMALE = 0;
-    const GENDER_UNISEX = 2;
+    const GENDER_MALE   = 1;
+    const GENDER_FAMALE = 2;
+    const GENDER_UNISEX = 3;
 
     protected $fillable =  [
         'id',
@@ -22,6 +22,8 @@ class Product extends Model
         'price',
         'category_id',
     ];
+
+    protected $hidden = ['created_at', 'updated_at'];
 
     public function category() {
         return $this->belongsTo(Category::class);

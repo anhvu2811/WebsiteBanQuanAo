@@ -17,12 +17,11 @@ Route::get('/', [ProductController::class, 'getHotTrendProducts'])->name('page.i
 Route::get('/about', [SettingController::class, 'displayAbout'])->name('page.about');
 Route::get('/news', [SettingController::class, 'displayNews'])->name('page.news');
 Route::get('/account/login', [SettingController::class, 'displayLogin'])->name('login');
-Route::get('/collections/all', [ProductController::class, 'showAllProduct'])->name('product.showAllProduct');
+Route::get('/collections/all', [ProductController::class, 'collections'])->name('product.collections');
 Route::get('/collections/{id}', [ProductController::class, 'getProductDetail'])->name('product.getProductDetail');
 Route::get('/collections/{gender}/{categoryName}', [ProductController::class, 'showCategoryProducts'])->name('product.productByCategory');
 
 Route::get('/product/checkquanity/{productId}/{sizeId}', [ProductController::class, 'checkSizeQuanity']);
-Route::get('/product/search', [ProductController::class, 'search'])->name('product.search');
 
 // --------------------- Login ---------------------
 Route::post('/account/login', [LoginController::class, 'login'])->name('login.index');
@@ -80,3 +79,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/change-password',[LoginController::class, 'changePassword'])->name('change-password');
 });
 
+
+ //
+Route::get('/get-categories', [ProductController::class, 'getCategories'])->name('product.getCategories');
+Route::get('/setting', [ProductController::class, 'setting'])->name('header.setting');
+Route::get('/get-products', [ProductController::class, 'getProducts'])->name('product.get-products');

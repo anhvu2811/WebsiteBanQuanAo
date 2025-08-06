@@ -77,20 +77,7 @@
                 <div class="col-xs-12 col-sm-4 col-lg-4">
                    <div class="footer-widget">
                       <h4><span>Liên hệ</span></h4>
-                      <ul class="list-menu list-showroom">
-                         <li class="clearfix">
-                            <i class="block_icon fa fa-map-marker"></i> 
-                            <p>
-                              {{ $setting->location ?? 'NULL' }} 
-                            </p>
-                         </li>
-                         <li class="clearfix"><i class="block_icon fa fa-envelope"></i>
-                            <a href="mailto:support@sapo.vn">{{ $setting->email ?? 'NULL' }}</a>
-                         </li>
-                         <li class="clearfix"><i class="block_icon fa fa-phone"></i>
-                            <a href="tel:18006750">{{ $setting->hotline ?? 'NULL' }}</a>
-                         </li>
-                      </ul>
+                      <ul class="list-menu list-showroom" id="footer-info-setting"></ul>
                    </div>
                 </div>
              </div>
@@ -115,3 +102,53 @@
        </div>
     </div>
  </footer>
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+ <script>
+   $(document).ready(function() {
+      const cacheKey = 'site_settings';
+      const cacheTimeKey = 'site_settings_time';
+      const cacheDuration = 60 * 60 * 2000; // 2 giờ
+
+      let cachedData = localStorage.getItem(cacheKey);
+      let cachedTime = localStorage.getItem(cacheTimeKey);
+
+      if (cachedData && cachedTime && (Date.now() - cachedTime < cacheDuration)) {
+         renderSettings(JSON.parse(cachedData));
+      } else {
+         $.ajax({
+            url: '/setting',
+            method: 'GET',
+            success: function(response) {
+                  if (response.success) {
+                     localStorage.setItem(cacheKey, JSON.stringify(response.data));
+                     localStorage.setItem(cacheTimeKey, Date.now());
+                     renderSettings(response.data);
+                  }
+            },
+            error: function() {
+                  alert('Get info setting error');
+            }
+         });
+      }
+
+      function renderSettings(data) {
+         let html = `
+            <li class="clearfix">
+               <i class="block_icon fa fa-map-marker"></i> 
+               <p>
+                ${data.location || 'Đang cập nhật'}
+               </p>
+            </li>
+            <li class="clearfix">
+               <i class="block_icon fa fa-envelope"></i>
+               <a href="mailto:support@sapo.vn">${data.email || 'Đang cập nhật'}</a>
+            </li>
+            <li class="clearfix">
+               <i class="block_icon fa fa-phone"></i>
+               <a href="tel:18006750">${data.hotline || 'Đang cập nhật'}</a>
+            </li>
+         `;
+         $('#footer-info-setting').html(html);
+      }
+   });
+ </script>

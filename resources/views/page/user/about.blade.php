@@ -1,8 +1,6 @@
 @extends('layouts/user/layoutmaster')
+@section('page_title', 'Giới Thiệu')
 @section('content')
-<head>
-   <title> {{ $setting->site_name ?? 'NULL' }} - Giới Thiệu	</title>
-</head>
 <div>
     <section class="bread-crumb">
         <div class="container">

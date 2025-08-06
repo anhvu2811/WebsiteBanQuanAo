@@ -1,8 +1,6 @@
 @extends('layouts/user/layoutmaster')
+@section('page_title', 'Tất Cả Sản Phẩm')
 @section('content')
-<head>
-   <title> {{ $setting->site_name ?? 'NULL' }} - Tất Cả Sản Phẩm </title>
-</head>
 <style>
    .zoom-hover {
       transition: transform 0.3s ease;
@@ -11,6 +9,45 @@
    .zoom-hover:hover {
       transform: scale(1.10);
    }
+   @media (max-width: 991px) {
+      .left-content {
+         display: none !important;
+      }
+   }
+   /* Container skeleton */
+   .skeleton { background: #f3f3f3; border-radius: 5px; overflow: hidden; position: relative; }
+
+   /* Shimmer animation */
+   .skeleton::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -150px;
+      width: 150px; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+      animation: shimmer 1.5s infinite;
+   }
+   @keyframes shimmer {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(300px); }
+   }
+
+   /* Fake image */
+   .skeleton-img {
+      width: 100%;
+      height: 240px;
+      background: #ddd;
+   }
+
+   /* Fake text lines */
+   .skeleton-line {
+      height: 16px;
+      background: #ddd;
+      margin: 8px 0;
+      border-radius: 3px;
+   }
+   .skeleton-title { width: 70%; }
+   .skeleton-price { width: 40%; }
+
 </style>
 <div>
    <section class="bread-crumb">
@@ -30,19 +67,7 @@
    </section>
    <div class="container border-bottom-col">
       <div class="row">
-         @if(request()->has('q') && request('q') != '') 
-            @if($products->count() > 0) 
-               <p style="text-align:center; font-size: 20px; font-style: italic;">
-                  Tìm thấy <b style="color:#e8b34f; font-size: 22px;">{{ $products->total() }}</b> sản phẩm với từ khóa 
-                  <b style="color:#e8b34f;">"{{ request('q') }}"</b>
-               </p>
-            @else
-               <p style="text-align:center; font-size: 20px; font-style: italic;">
-                  Không tìm thấy sản phẩm nào với từ khóa 
-                  <b style="color:#e8b34f;">"{{ request('q') }}"</b>.
-               </p>
-            @endif
-         @endif
+         <div id="result-search-text"></div>
       </div>
       <div class="row">
          <section class="main_container collection col-lg-10 col-lg-push-2">
@@ -53,62 +78,21 @@
                         <h1 class=" title-head margin-top-0 margin-bottom-0">Tất cả sản phẩm</h1>
                      </div>
                      <div class="col-xs-7 col-sm-6 text-xs-left text-sm-right fix-xss-12">
-                        <div>
-                           <div id="sort-by">
-                              <ul>
-                                 <li>
-                                    <span class="fixtt">Thứ tự</span>
-                                    <ul>
-                                       <li><a href="?sortby=default">Mặc định</a></li>
-                                       <li><a href="?sortby=alpha-asc">A → Z</a></li>
-                                       <li><a href="?sortby=alpha-desc">Z → A</a></li>
-                                       <li><a href="?sortby=price-asc">Giá tăng dần</a></li>
-                                       <li><a href="?sortby=price-desc">Giá giảm dần</a></li>
-                                       <li><a href="?sortby=created-desc">Hàng mới nhất</a></li>
-                                       <li><a href="?sortby=created-asc">Hàng cũ nhất</a></li>
-                                    </ul>
-                                 </li>
-                                 <script>
-                                    $(document).ready(function() {
-                                       function getQueryVariable(variable)
-                                       {
-                                             var query = window.location.search.substring(1);
-                                             var vars = query.split("&");
-                                             for (var i=0;i<vars.length;i++) {
-                                                var pair = vars[i].split("=");
-                                                if(pair[0] == variable){return pair[1];}
-                                             }
-                                             return(false);
-                                       }
-                                       var check = getQueryVariable("sortby");
-                                       
-                                       switch(check){
-                                             case "default":
-                                                $('.fixtt').text('Mặc định');		
-                                                break;
-                                             case "alpha-asc":
-                                                $('.fixtt').text('Tên A - Z');		
-                                                break;
-                                             case "alpha-desc":
-                                                $('.fixtt').text('Tên Z - A');		
-                                                break;
-                                             case "price-asc":
-                                                $('.fixtt').text('Giá tăng dần');		
-                                                break;
-                                             case "price-desc":
-                                                $('.fixtt').text('Giá giảm dần');		
-                                                break;
-                                             case "created-asc":
-                                                $('.fixtt').text('Hàng cũ nhất');		
-                                                break;
-                                             case "created-desc":
-                                                $('.fixtt').text('Hàng mới nhất');		
-                                                break;
-                                       }
-                                    });
-                                 </script>
-                              </ul>
-                           </div>
+                        <div id="sort-by">
+                           <ul>
+                              <li>
+                                 <span class="fixtt">Thứ tự</span>
+                                 <ul id="sort-filter">
+                                    <li><a href="">Mặc định</a></li>
+                                    <li><a href="">A → Z</a></li>
+                                    <li><a href="">Z → A</a></li>
+                                    <li><a href="">Giá tăng dần</a></li>
+                                    <li><a href="">Giá giảm dần</a></li>
+                                    <li><a href="">Hàng mới nhất</a></li>
+                                    <li><a href="">Hàng cũ nhất</a></li>
+                                 </ul>
+                              </li>
+                           </ul>
                         </div>
                      </div>
                   </div>
@@ -119,82 +103,10 @@
                   </div>
                @endif
                <section class="products-view products-view-grid">
-                  @if(count($products) == 0)
-                     <p style="text-align: center; font-style: italic; color: gray;">No products found</p>
-                  @else
-                     <div class="row">
-                        @foreach($products as $product)
-                           <div class="col-xs-6 col-sm-4 col-md-4 col-lg-5-fix">
-                              <div class="product-box a-center">
-                                 <div class="product-thumbnail">
-                                    @if($product->discount)
-                                       <div class="sale-flash"> 
-                                          {{ $product->discount->discount_level }}% 
-                                       </div>
-                                    @endif
-                                    <a href="/collections/{{ $product->id }}" title="{{ $product->name }}">
-                                       <picture>
-                                          <source media="(min-width: 1200px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
-                                          <source media="(min-width: 992px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
-                                          <source media="(min-width: 569px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
-                                          <source media="(max-width: 480px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
-                                          <source media="(max-width: 375px)" srcset="{{ asset('storage/' . $product->images->first()->image_url) }}">
-
-                                          <img width="240" height="240" data-src="{{ asset('storage/' . $product->images->first()->image_url) }}" alt="{{ $product->name }}" class="lazyload img-responsive center-block zoom-hover">
-                                       </picture>
-                                    </a>
-                                    {{-- <div class="product-action clearfix">
-                                       <form action="{{ route('cart.add') }}" method="post" class="variants form-nut-grid" data-id="product-actions-{{ $product->id }}" enctype="multipart/form-data">
-                                          @csrf
-                                          <div>
-                                             <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                             <input type="hidden" name="quantity" value="1" min="1" max="10">
-                                             @if($product->discount) 
-                                                <input type="hidden" name="price" value="{{ $product->discount->new_price }}">
-                                             @else
-                                                <input type="hidden" name="price" value="{{ $product->price }}">
-                                             @endif
-                                             <button class="btn-buy btn-cart btn btn-primary left-to add_to_cart " title="Cho vào giỏ hàng">
-                                                <span>
-                                                   <i class="fa fa-cart-plus" aria-hidden="true"></i>
-                                                   Mua hàng
-                                                </span>
-                                             </button>
-                                          </div>
-                                       </form>
-                                    </div> --}}
-                                 </div>
-                                 <div class="product-info">
-                                    <h3 class="product-name"><a href="/collections/{{ $product->id }}" title="{{ $product->name }}">{{ $product->name }}</a></h3>
-                                    <div class="price-box clearfix">
-                                       @if($product->discount)
-                                          <div class="special-price inline-block">
-                                             <span class="price product-price">{{ number_format($product->discount->new_price, 0, ',', '.') }}₫</span>
-                                          </div>
-                                          <div class="old-price inline-block">															 
-                                             <span class="price product-price-old">
-                                                {{ number_format($product->price, 0, ',', '.') }}₫
-                                             </span>
-                                          </div>
-                                       @else
-                                          <div class="special-price inline-block">
-                                             <span class="price product-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
-                                          </div>
-                                       @endif
-                                    </div>
-                                 </div>
-                              </div>
-                           </div>
-                        @endforeach
-                     </div>
+                     <p style="text-align: center; font-style: italic; color: gray; display: none;" id="no-product-found">No products found</p>
+                     <div class="row" id="cart-product"></div>
                      <div class="text-xs-center">
-                     <nav class="clearfix a-center">
-                           <ul class="pagination clearfix">
-                                 {{ $products->appends(request()->query())->links('pagination::bootstrap-4') }}
-                           </ul>
-                     </nav>
                      </div>
-                  @endif
                </section>
             </div>
          </section>
@@ -205,18 +117,7 @@
                </div>
                <div class="aside-content">
                   <nav class="nav-category navbar-toggleable-md">
-                     <ul class="nav navbar-pills">
-                        @if($maleCate)
-                           @foreach($maleCate as $category)
-                              <li class="nav-item">
-                                 <i class="fa fa-caret-right"></i>
-                                 <a class="nav-link" href="{{ route('product.productByCategory', ['gender' => 'male', 'categoryName' => $category->name]) }}" style="text-transform: uppercase;">
-                                    {{ $category->name }} <small style="color: #808080">({{ $category->product_count }})</small>
-                                 </a>
-                              </li>
-                        @endforeach
-                        @endif
-                     </ul>
+                     <ul class="nav navbar-pills" id="male-cate"></ul>
                   </nav>
                </div>
             </aside>
@@ -226,24 +127,265 @@
                </div>
                <div class="aside-content">
                   <nav class="nav-category navbar-toggleable-md">
-                     <ul class="nav navbar-pills">
-                        @if($famaleCate)
-                           @foreach($famaleCate as $category)
-                              <li class="nav-item">
-                                 <i class="fa fa-caret-right"></i>
-                                 <a class="nav-link" href="{{ route('product.productByCategory', ['gender' => 'famale', 'categoryName' => $category->name]) }}" style="text-transform: uppercase;">
-                                    {{ $category->name }} <small style="color: #808080">({{ $category->product_count }})</small>
-                              </a>
-                              </li>
-                           @endforeach
-                        @endif
-                     </ul>
+                     <ul class="nav navbar-pills" id="famale-cate"></ul>
                   </nav>
                </div>
             </aside>
          </aside>
       </div>
    </div>
-     @include('page/user/list_brands');
+     @include('page/user/list_brands')
 </div>
+@endsection
+
+@section('scripts')
+   <script>
+      $(document).ready(function () {
+         let page = 1;
+         let loading = false;
+         let hasMore = true;
+         let cate_id = null;
+         let gender = null;
+         let sortBy = null;
+         let search = null;
+
+         getProducts();
+         getCategories();
+
+         $(window).on('scroll', function() {
+            if($(window).scrollTop() + $(window).height() >= $(document).height() - 200) {
+               getProducts();
+            }
+         });
+
+         //render product
+         function getProducts() {
+            const getProductUrl = "{{ route('product.get-products') }}?page=" + page + (search ? "&search=" + encodeURIComponent(search) : "") +
+                                                                                       (cate_id ? "&category=" + cate_id : "") + 
+                                                                                       (gender ? "&gender=" + gender : "") + 
+                                                                                       (sortBy ? "&sort=" + sortBy : "");
+
+            if(loading || !hasMore) return;  
+            loading = true;
+            showSkeleton();
+            setTimeout(() => {
+               $.ajax({
+                  url: getProductUrl,
+                  method: 'GET',
+                  success: function(response) {
+                     const products = Array.isArray(response.data) ? response.data : response.data.data;
+                     const totalProducts = response.total;
+                     checkExistsProduct(products.length);
+                     if(response.success) {
+                        let html = '';
+                        hideSkeleton(); 
+                        if(search) {
+                           showResultSearchText(totalProducts, search)
+                        }
+                        products.forEach(function(item) {
+                           html += renderProduct(item)
+                        });
+                        $('#cart-product').append(html);
+
+                        hasMore = !!response.data?.next_page_url;
+                        page++;
+                        loading = false;
+                     }
+                  },
+                  error: function(xhr) {
+                     alert('Get product error');
+                  }
+               })
+            }, 600);
+         }
+
+         function showSkeleton(count = 10) {
+            let skeletonHtml = '';
+            for (let i = 0; i < count; i++) {
+               skeletonHtml += `
+               <div class="col-xs-6 col-sm-4 col-md-4 col-lg-5-fix">
+                     <div class="product-box skeleton">
+                        <div class="product-thumbnail skeleton-img"></div>
+                        <div class="product-info">
+                           <div class="skeleton-line skeleton-title"></div>
+                           <div class="skeleton-line skeleton-price"></div>
+                        </div>
+                     </div>
+               </div>`;
+            }
+            $('#cart-product').append(skeletonHtml);
+         }
+
+         function hideSkeleton() {
+            $('.skeleton').remove();
+         }
+
+         function renderProduct(item) {
+            let html = '';
+            const productUrl = `/collections/${item.id}`;
+            const hasDiscount = item.discount !== null;
+            const imageUrl = (item.images?.length > 0) ? `/storage/${item.images[0].image_url}` : '/images/no-image.png';
+            html += `<div class="col-xs-6 col-sm-4 col-md-4 col-lg-5-fix">
+                        <div class="product-box a-center">
+                           <div class="product-thumbnail">
+                              ${hasDiscount ? 
+                                 `<div class="sale-flash"> 
+                                    ${item.discount.discount_level}% 
+                                 </div>` : ''
+                              }
+                              <a href="${productUrl}" title="${item.name}">
+                                 <picture>
+                                    <source media="(min-width: 1200px)" srcset="${imageUrl}">
+                                    <source media="(min-width: 992px)" srcset="${imageUrl}">
+                                    <source media="(min-width: 569px)" srcset="${imageUrl}">
+                                    <source media="(max-width: 480px)" srcset="${imageUrl}">
+                                    <source media="(max-width: 375px)" srcset="${imageUrl}">
+
+                                    <img width="240" height="240" data-src="${imageUrl}" alt="${item.name}" class="lazyload img-responsive center-block zoom-hover">
+                                 </picture>
+                              </a>
+                           </div>
+                           <div class="product-info">
+                              <h3 class="product-name"><a href="${productUrl}" title="${item.name}">${item.name}</a></h3>
+                              <div class="price-box clearfix">
+                                 ${hasDiscount ? `
+                                    <div class="special-price inline-block">
+                                       <span class="price product-price"> ${formatCurrency(item.discount.new_price, 0, ',', '.')}</span>
+                                    </div>
+                                    <div class="old-price inline-block">															 
+                                       <span class="price product-price-old">
+                                          ${formatCurrency(item.price, 0, ',', '.')}
+                                       </span>
+                                    </div>`
+                                 : `
+                                    <div class="special-price inline-block">
+                                       <span class="price product-price">${formatCurrency(item.price, 0, ',', '.')}</span>
+                                    </div>
+                                    `
+                                 }
+                              </div>
+                           </div>
+                        </div>
+                     </div>`;
+               return html;
+         }
+
+         function checkExistsProduct(data) {
+            if(data <= 0) {
+               $('no-product-found').show();
+            } else {
+               $('no-product-found').hide();
+            }
+         }
+
+         function formatCurrency(value) {
+            return new Intl.NumberFormat('vi-VN').format(value) + 'đ';
+         }
+
+          //api get categories
+         function getCategories() {
+            const getCateUrl = "{{ route('product.getCategories') }}"
+            $.ajax({
+               url: getCateUrl,
+               method: 'GET',
+               success: function(response) {
+                  if(response.success) {
+                     const maleCate = response.data.maleCate;
+                     const famaleCate = response.data.famaleCate;
+
+                     let male_html = '';
+                     let famale_html = '';
+                     maleCate.forEach(function(category) {
+                        const maleCateUrl = `/collections/male/${category.name}`;
+                        male_html += `
+                           <li class="nav-item">
+                              <i class="fa fa-caret-right"></i>
+                                    <a class="nav-link" href="" style="text-transform: uppercase;" data-id="${category.id}" data-gender="1">
+                                       ${category.name} <small style="color: #808080">( ${category.product_count})</small>
+                                 </a>
+                           </li>
+                           `;
+                     });
+                     famaleCate.forEach(function(category) {
+                        const famaleCateUrl = `/collections/famale/${category.name}`;
+                        famale_html += `
+                           <li class="nav-item">
+                              <i class="fa fa-caret-right"></i>
+                                    <a class="nav-link" href="" style="text-transform: uppercase;" data-id="${category.id}" data-gender="2">
+                                       ${category.name} <small style="color: #808080">( ${category.product_count})</small>
+                                 </a>
+                           </li>
+                           `;
+                     });
+                     $('#male-cate').html(male_html);
+                     $('#famale-cate').html(famale_html);
+                  }
+               },
+               error: function(xhr) {
+                  alert('Error get categories');
+               }
+            })
+         }
+
+         function showResultSearchText(totalProducts, keyword) {
+            let html_result = '';
+            if(totalProducts) {
+               html_result += `<p style="text-align:center; font-size: 20px; font-style: italic;">
+                                 Tìm thấy <b style="color:#e8b34f; font-size: 22px;">${totalProducts}</b> sản phẩm với từ khóa 
+                                 <b style="color:#e8b34f;">"${keyword}"</b>
+                              </p>`;
+            } else {
+               html_result = `<p style="text-align:center; font-size: 20px; font-style: italic;">
+                                 Không tìm thấy sản phẩm nào với từ khóa 
+                                 <b style="color:#e8b34f;">"${keyword}"</b>.
+                              </p>`;
+            }
+            $('#result-search-text').html('');
+            $('#result-search-text').html(html_result);
+         }
+
+         //search
+         $('.search_form').on('submit', function(e) {
+            e.preventDefault();  
+            search  = $('#search-input').val().trim();
+            if(search.length === 0) return;
+            page = 1;
+            hasMore = true;
+            $('#cart-product').html('');
+            showSkeleton();
+            getProducts();
+         })
+
+         //filter category
+         $('#male-cate, #famale-cate').on('click', 'li a', function(e) {
+            e.preventDefault();
+            cate_id = $(this).data('id');
+            gender = $(this).data('gender');
+            page = 1;
+            hasMore = true;
+            $('#cart-product').html('');
+            getProducts();
+         });
+
+         //sort by
+         $('#sort-filter').on('click', 'li a', function(e) {
+            e.preventDefault();
+            const filterText = $(this).text().trim();
+            switch(filterText) {
+               case 'A → Z': sortBy = 'name_asc'; break;
+               case 'Z → A': sortBy = 'name_desc'; break;
+               case 'Giá tăng dần': sortBy = 'price_asc'; break;
+               case 'Giá giảm dần': sortBy = 'price_desc'; break;
+               case 'Hàng mới nhất': sortBy = 'newest'; break;
+               case 'Hàng cũ nhất': sortBy = 'oldest'; break;
+               default: sortBy = 'default'; break;
+            }
+
+            page = 1;
+            hasMore = true;
+            $('#cart-product').html('');
+            getProducts();
+         });
+      })
+   </script>
 @endsection

@@ -164,52 +164,21 @@ class ProductController extends Controller
     }
 
 
-    public function showAllProduct(Request $request) 
+    public function collections(Request $request) 
     {
-        $setting = Setting::first();
-        $perPage = $request->get('perPage', 15);
-        $products = Product::paginate($perPage);
-        $maleCate = Category::join('tbl_product', 'tbl_category.id', '=', 'tbl_product.category_id')
-                            ->select('tbl_category.id', 'tbl_category.name', \DB::raw('COUNT(tbl_product.id) as product_count'))
-                            ->where('tbl_product.gender', Product::GENDER_MALE)
-                            ->groupBy('tbl_category.id', 'tbl_category.name')
-                            ->get();
-
-        $famaleCate = Category::join('tbl_product', 'tbl_category.id', '=', 'tbl_product.category_id')
-                            ->select('tbl_category.id', 'tbl_category.name', \DB::raw('COUNT(tbl_product.id) as product_count'))
-                            ->where('tbl_product.gender', Product::GENDER_FAMALE)
-                            ->groupBy('tbl_category.id', 'tbl_category.name')
-                            ->get();
-        return view('page.user.collections', compact('products', 'maleCate', 'famaleCate', 'setting'));
+        return view('page.user.collections');
     }
 
     public function showCategoryProducts(Request $request, $gender, $categoryName) 
     {
-        $setting = Setting::first();
-        $perPage = $request->get('perPage', 15);
         $category = Category::where('name', $categoryName)->first();
-
         if($gender == 'male') {
             $gender = 1;
         } else {
             $gender = 0;
         }
-
         $products = Product::where('category_id', $category->id)->where('gender', $gender)->paginate($perPage);
-
-        $maleCate = Category::join('tbl_product', 'tbl_category.id', '=', 'tbl_product.category_id')
-                            ->select('tbl_category.id', 'tbl_category.name', \DB::raw('COUNT(tbl_product.id) as product_count'))
-                            ->where('tbl_product.gender', 1)
-                            ->groupBy('tbl_category.id', 'tbl_category.name')
-                            ->get();
-
-        $famaleCate = Category::join('tbl_product', 'tbl_category.id', '=', 'tbl_product.category_id')
-                            ->select('tbl_category.id', 'tbl_category.name', \DB::raw('COUNT(tbl_product.id) as product_count'))
-                            ->where('tbl_product.gender', 0)
-                            ->groupBy('tbl_category.id', 'tbl_category.name')
-                            ->get();
-
-        return view('page.user.collections', compact('products', 'maleCate', 'famaleCate', 'setting'));
+        return view('page.user.collections', compact('products'));
     }
 
     public function getHotTrendProducts()
@@ -233,22 +202,20 @@ class ProductController extends Controller
                                         ->get()
                                         ->pluck('product_id');
         $bestSellingProducts = Product::whereIn('id', $bestSellingProducts)->get();
-                    
-        $setting = Setting::first();
+                
         $bannerMain = Banner::where('type', 'main')->get();
         $bannerSub = Banner::where('type', 'sub')->get();
 
-        return view('page.user.index', compact('hotTrendProducts', 'listLatestProducts', 'bestSellingProducts', 'setting', 'bannerMain', 'bannerSub'));
+        return view('page.user.index', compact('hotTrendProducts', 'listLatestProducts', 'bestSellingProducts', 'bannerMain', 'bannerSub'));
     }
 
     public function getProductDetail($id)
     {
         $product = Product::find($id);
-        $setting = Setting::first();
         $getRelatedProducts = Product::where('category_id', '=', $product->category_id)
                                     ->where('id', '!=', $product->id)
                                     ->get();
-        return view('page.user.product_detail', compact('product', 'setting', 'getRelatedProducts'));
+        return view('page.user.product_detail', compact('product', 'getRelatedProducts'));
     }
 
     public function deleteProductImage($id)
@@ -337,24 +304,89 @@ class ProductController extends Controller
         ]);
     }
 
-    public function search(Request $request)
+    // API get catogories
+    public function getCategories(Request $request)
     {
-        $name = $request->input('q');
-        $setting = Setting::first();
-        $perPage = $request->get('perPage', 15);
-        $products = Product::where('name', 'like', '%'.$name.'%')->paginate($perPage);
         $maleCate = Category::join('tbl_product', 'tbl_category.id', '=', 'tbl_product.category_id')
                             ->select('tbl_category.id', 'tbl_category.name', \DB::raw('COUNT(tbl_product.id) as product_count'))
-                            ->where('tbl_product.gender', 1)
+                            ->where('tbl_product.gender', Product::GENDER_MALE)
                             ->groupBy('tbl_category.id', 'tbl_category.name')
                             ->get();
 
         $famaleCate = Category::join('tbl_product', 'tbl_category.id', '=', 'tbl_product.category_id')
                             ->select('tbl_category.id', 'tbl_category.name', \DB::raw('COUNT(tbl_product.id) as product_count'))
-                            ->where('tbl_product.gender', 0)
+                            ->where('tbl_product.gender', Product::GENDER_FAMALE)
                             ->groupBy('tbl_category.id', 'tbl_category.name')
                             ->get();
-        return view('page.user.collections', compact('products', 'maleCate', 'famaleCate', 'setting'));
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'maleCate' => $maleCate,
+                'famaleCate' => $famaleCate
+            ],
+        ]);
+    }
+
+    // API info setting for header
+    public function setting() 
+    {
+        $setting = Setting::first();
+        return response()->json([
+            'success' => true,
+            'data' => $setting
+        ]);
+    }
+
+    // API get product for collection
+    public function getProducts(Request $request)
+    {
+        $query =  Product::with(['category', 'discount', 'images']);
+        $limit = $request->get('limit', 10);
+        if($request->has('search')) {
+            $keyword = $request->search;
+            $query->where('name', 'like', "%{$keyword}%");
+        }
+        if($request->has('category')) {
+            $query->where('category_id', '=', $request->category);
+        }
+        if($request->has('gender')) {
+            $query->where('gender', '=', $request->gender);
+        }
+        if($request->has('sort')) {
+            $sort = $request->get('sort');
+            switch($sort) {
+                case 'name_asc':
+                    $query->orderBy('name', 'asc');
+                    break;
+                case 'name_desc':
+                    $query->orderBy('name', 'desc');
+                    break;
+                case 'price_asc':
+                    $query->orderBy('price', 'asc');
+                    break;
+                case 'price_desc':
+                    $query->orderBy('price', 'desc');
+                    break;
+                case 'newest':
+                    $query->orderBy('created', 'desc');
+                    break;
+                case 'oldest':
+                    $query->orderBy('created', 'asc');
+                    break;
+                default:
+                    $query->orderBy('id', 'desc');
+                    break;
+            }
+        }
+        $products = $query->paginate($limit);
+        
+        return response()->json([
+            'success' => true,
+            'data' => $products,
+            'total' => $products->total(),
+            'next_page_url' => $products->nextPageUrl()
+        ]);
     }
 
 }

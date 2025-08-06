@@ -1,7 +1,7 @@
 @extends('layouts/user/layoutmaster')
+@section('page_title', 'Trang Chủ')
 @section('content')
 <head>
-   <title>{{ $setting->site_name ?? 'NULL' }} - Trang Chủ</title>
    <style>
       .home-slider {
          width: 100%;

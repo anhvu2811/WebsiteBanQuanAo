@@ -151,17 +151,7 @@
     <div class="topbar">
        <div class="container">
           <div class="row">
-             <div class="col-sm-6 col-md-7 a-left">
-                <span class="header-contact-item"><i class="fa fa-map-marker"></i> 
-                {{ $setting->location ?? 'NULL' }}
-                </span>
-                <span class="header-contact-item hidden-sm"><i class="fa fa-mobile-alt"></i>
-                  <a href="tel:19006750" style="color: #fff;">{{ $setting->hotline ?? 'NULL' }}</a>
-                </span>
-                <span class="header-contact-item hidden-sm hidden-xs hidden-md"><i class="fa fa-clock"></i>
-                  {{ $setting->time_active ?? 'NULL'}}
-                </span>
-             </div>
+             <div class="col-sm-6 col-md-7 a-left" id="setting-info"></div>
                <div class="col-sm-6 col-md-5 col-xs-12">
                   <ul class="list-inline f-right">
                      {{-- <li><i class="fa fa-unlock-alt"></i> <a href="/account/register">Đăng ký</a></li> --}}
@@ -189,8 +179,8 @@
                      <li class="search">
                         <a href="javascript:;"><i class="fa fa-search"></i></a>
                         <div class="header_search search_form">
-                           <form class="input-group search-bar search_form" action="/product/search" method="get" role="search">
-                                 <input type="search" name="q" value="" placeholder="Tìm kiếm sản phẩm..." class="input-group-field st-default-search-input search-text" autocomplete="off">
+                           <form class="input-group search-bar search_form" role="search">
+                                 <input type="search" id="search-input" name="search" value="" placeholder="Tìm kiếm sản phẩm..." class="input-group-field st-default-search-input search-text" autocomplete="off">
                                  <span class="input-group-btn">
                                     <button class="btn icon-fallback-text">
                                        <i class="fa fa-search"></i>
@@ -217,7 +207,7 @@
              </a>
           </li>
           <li class="nav-item hidden-sm hidden-xs ">
-             <a href="{{ route('product.showAllProduct') }}" class="nav-link">Sản phẩm</a>
+             <a href="{{ route('product.collections') }}" class="nav-link">Sản phẩm</a>
           </li>
           <li class="nav-item hidden-sm hidden-xs "><a class="nav-link" href="{{ route('page.news' )}}">Tin tức</a></li>
           <li class="top-cart-contain f-right">
@@ -317,7 +307,8 @@
       </div>
    </div>
 
-    <script>
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   <script>
       document.addEventListener("DOMContentLoaded", function() {
          const menuBar = document.querySelector('.menu-bar');
          const navMobile = document.getElementById('nav-mobile');
@@ -366,14 +357,67 @@
             toggleButton.addEventListener('click', function () {
                if (passwordInput.type === 'password') {
                      passwordInput.type = 'text';
-                     toggleButton.innerHTML = '<i class="fa fa-eye-slash"></i>';  // Thay đổi icon thành "ẩn"
+                     toggleButton.innerHTML = '<i class="fa fa-eye-slash"></i>';  //hide
                } else {
                      passwordInput.type = 'password';
-                     toggleButton.innerHTML = '<i class="fa fa-eye"></i>';  // Thay đổi icon thành "hiển thị"
+                     toggleButton.innerHTML = '<i class="fa fa-eye"></i>';  //show
                }
             });
          }
       });
 
-    </script>
+      $(document).ready(function() {
+         const cacheKey = 'site_settings';
+         const cacheTimeKey = 'site_settings_time';
+         const cacheDuration = 60 * 60 * 2000; // 2 giờ
+
+         let cachedData = localStorage.getItem(cacheKey);
+         let cachedTime = localStorage.getItem(cacheTimeKey);
+
+         if (cachedData && cachedTime && (Date.now() - cachedTime < cacheDuration)) {
+            renderSettings(JSON.parse(cachedData));
+         } else {
+            $.ajax({
+               url: '/setting',
+               method: 'GET',
+               success: function(response) {
+                     if (response.success) {
+                        localStorage.setItem(cacheKey, JSON.stringify(response.data));
+                        localStorage.setItem(cacheTimeKey, Date.now());
+                        renderSettings(response.data);
+                     }
+               },
+               error: function() {
+                     alert('Get info setting error');
+               }
+            });
+         }
+
+         function renderSettings(data) {
+            let html = `
+               <span class="header-contact-item">
+                  <i class="fa fa-map-marker"></i> 
+                  ${data.location || 'Đang cập nhật'}
+               </span>
+               <span class="header-contact-item hidden-sm">
+                  <i class="fa fa-mobile-alt"></i>
+                  <a href="tel:${data.hotline || ''}" style="color: #fff;">
+                     ${data.hotline || 'Đang cập nhật'}
+                  </a>
+               </span>
+               <span class="header-contact-item hidden-sm hidden-xs hidden-md">
+                  <i class="fa fa-clock"></i>
+                  ${data.time_active || 'Đang cập nhật'}
+               </span>
+            `;
+            $('#setting-info').html(html);
+            updateTitle(data);
+         }
+
+         function updateTitle(data) {
+            const pageTitle = document.title || '';
+            document.title = `${data.site_name || 'Website'}${pageTitle ? ' | ' + pageTitle : ''}`;
+         }
+      });
+   </script>
  </header>

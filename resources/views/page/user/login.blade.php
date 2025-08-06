@@ -1,8 +1,6 @@
 @extends('layouts/user/layoutmaster')
+@section('page_title', 'Đăng Nhập')
 @section('content')
-<head>
-   <title> {{ $setting->site_name ?? 'NULL' }} - Đăng Nhập	</title>
-</head>
 <div>
     <section class="bread-crumb">
         <div class="container">
