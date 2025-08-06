@@ -144,10 +144,7 @@
          let page = 1;
          let loading = false;
          let hasMore = true;
-         let cate_id = null;
-         let gender = null;
-         let sortBy = null;
-         let search = null;
+         let cate_id, gender, sortBy, search = null;
 
          getProducts();
          getCategories();

@@ -375,7 +375,7 @@ class ProductController extends Controller
                     $query->orderBy('created', 'asc');
                     break;
                 default:
-                    $query->orderBy('id', 'desc');
+                    $query->orderBy('id', 'asc');
                     break;
             }
         }
