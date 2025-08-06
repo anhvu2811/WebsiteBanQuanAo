@@ -44,8 +44,12 @@
                <div class="row">
                   <div class="col-xs-12 col-sm-12 col-md-6 col-lg-7 relative product-image-block ">
                      <div class="large-image featured-image">
-                        <a href="{{ asset('storage/' . $product->images->first()->image_url) }}" data-rel="prettyPhoto[product-gallery]">
-                        <img id="zoom_01" src="{{ asset('storage/' . $product->images->first()->image_url) }}" alt="{{ $product->name }}">
+                        @php
+                           $imageUrl = $product->images->first()->image_url ?? null;
+                           $hasImage = $imageUrl && Storage::disk('public')->exists($imageUrl);
+                        @endphp
+                        <a href="{{ $imageUrl }}" data-rel="prettyPhoto[product-gallery]">
+                        <img id="zoom_01" src="{{ $hasImage ? asset('storage/' . $imageUrl) : asset('images/no-image.png') }}" alt="{{ $product->name }}">
                         </a>							
                         <div class="hidden">
                            <div class="item">
@@ -65,9 +69,13 @@
                      <div id="gallery_01" class="swiper-container more-views" data-margin="10" data-items="5" data-direction="vertical"> 
                         <div class="swiper-wrapper">
                            @foreach($product->productImages as $image)
+                              @php
+                                 $imageUrl = $product->images->first()->image_url ?? null;
+                                 $hasImage = $imageUrl && Storage::disk('public')->exists($imageUrl);
+                              @endphp
                               <div class="swiper-slide">
-                                 <a href="{{ asset('storage/' . $image->image_url )}}" class="thumb-link" title="" rel="{{ asset('storage/' . $image->image_url )}}">
-                                 <img src="{{ asset('storage/' . $image->image_url )}}" alt="{{ $product->name }}">
+                                 <a href="<?= $imageUrl ?>" class="thumb-link" title="" rel="<?= $imageUrl ?>">
+                                 <img src="{{ $hasImage ? asset('storage/' . $imageUrl) : asset('images/no-image.png') }}" alt="{{ $product->name }}">
                                  </a>
                               </div>
                            @endforeach
@@ -223,6 +231,10 @@
                   </div>
                   <div class="products owl-carousel owl-theme products-view-grid" data-md-items="6" data-sm-items="3" data-xs-items="2" data-margin="30">
                      @foreach($getRelatedProducts as $product)
+                        @php
+                           $imageUrl = $product->images->first()->image_url ?? null;
+                           $hasImage = $imageUrl && Storage::disk('public')->exists($imageUrl);
+                        @endphp
                         <div class="product-box a-center">
                            <div class="product-thumbnail">
                               @if($product->discount)
@@ -232,12 +244,12 @@
                               @endif
                               <a href="/collections/{{ $product->id }}" title="{{ $product->name }}">
                                  <picture>
-                                    <source media="(min-width: 1200px)" srcset="{{ asset('storage/'.$product->images->first()->image_url) }}">
-                                    <source media="(min-width: 992px)" srcset="{{ asset('storage/'.$product->images->first()->image_url) }}">
-                                    <source media="(min-width: 569px)" srcset="{{ asset('storage/'.$product->images->first()->image_url) }}">
-                                    <source media="(max-width: 480px)" srcset="{{ asset('storage/'.$product->images->first()->image_url) }}">
-                                    <source media="(max-width: 375px)" srcset="{{ asset('storage/'.$product->images->first()->image_url) }}">
-                                    <img width="240" height="240" src="{{ asset('storage/'.$product->images->first()->image_url) }}" alt="{{ $product->name }}" class="lazyload img-responsive center-block">
+                                    <source media="(min-width: 1200px)" srcset="{{ $hasImage ? asset('storage/' . $imageUrl) : asset('images/no-image.png') }}">
+                                    <source media="(min-width: 992px)" srcset="{{ $hasImage ? asset('storage/' . $imageUrl) : asset('images/no-image.png') }}">
+                                    <source media="(min-width: 569px)" srcset="{{ $hasImage ? asset('storage/' . $imageUrl) : asset('images/no-image.png') }}">
+                                    <source media="(min-width: 480px)" srcset="{{ $hasImage ? asset('storage/' . $imageUrl) : asset('images/no-image.png') }}">
+                                    <source media="(min-width: 375px)" srcset="{{ $hasImage ? asset('storage/' . $imageUrl) : asset('images/no-image.png') }}">
+                                    <img width="240" height="240" src="{{ $hasImage ? asset('storage/' . $imageUrl) : asset('images/no-image.png') }}" alt="{{ $product->name }}" class="lazyload img-responsive center-block">
                                  </picture>
                               </a>
                               {{-- <div class="product-action clearfix">
@@ -283,7 +295,6 @@
    </section>
    <script src="{{ asset('js/jquery.responsivetabs.min.js') }}" type="text/javascript"></script>
    <script>
-      
       $(window).on("load resize",function(e){
       
          if($(window).width() > 1199){
