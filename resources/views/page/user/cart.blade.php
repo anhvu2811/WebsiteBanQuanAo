@@ -130,7 +130,7 @@
                         <th>Thao tác</th>
                      </tr>
                   </thead>
-                  <tbody>
+                  <tbody id="body-cart">
                      @foreach($listCart as $cart)
                      <tr>
                            @php
@@ -182,4 +182,14 @@
    </div>
    @include('page/user/list_brands');
 </div>
+@endsection
+@section('script')
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   <script>
+      $(document).ready(function() {
+         if($('#body-cart')) {
+            console.log('Body-cart');
+         }
+      })
+   </script>
 @endsection

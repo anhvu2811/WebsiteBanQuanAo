@@ -18,7 +18,7 @@ class OrderEmail extends Mailable
     public function build()
     {
         return $this->subject('ĐƠN HÀNG WINEHOUSE')
-                    ->view('emails.order-email')
+                    ->view('emails.order-success-email')
                     ->with([
                         'cart' => $this->cart,
                         'order' => $this->order

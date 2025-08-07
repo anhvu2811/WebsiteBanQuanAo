@@ -62,7 +62,7 @@ class OrderController extends Controller
         $order->save();
 
         $userId = Auth::id();
-        $cart = CartItem::where('user_id', $userId)->get();
+        $cart = CartItem::where('user_id', $userId)->where('status', 'pending')->get();
 
         foreach ($cart as $item) {
             $orderItem = new OrderItem();

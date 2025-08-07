@@ -414,6 +414,10 @@
       $(document).ready(function() {
          $('#add-to-cart-form').on('submit', function (e) {
             e.preventDefault();
+
+            const checkBtnSize = $('#size_id').val();
+            if(checkBtnSize === '' || checkBtnSize === null) return;
+            
             let form = $(this)[0];
             let formData = new FormData(form);
             $.ajax({
