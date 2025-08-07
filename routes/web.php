@@ -11,6 +11,7 @@ use App\Http\Controllers\BannerController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Middleware\CheckRole;
 
 Route::get('/', [ProductController::class, 'getHotTrendProducts'])->name('page.index');
@@ -39,6 +40,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('admin.dashboard');
         Route::get('/product', [DashboardController::class, 'product'])->name('admin.product');
     });
+
+    Route::get('/get-cart-items', [CartController::class, 'getCartItemByUser'])->name('cart.get-cart-items');
     
     // --------------------- Category ---------------------
     Route::get('/category', [CategoryController::class, 'index'])->name('category.index');
@@ -76,3 +79,6 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/change-password',[LoginController::class, 'changePassword'])->name('change-password');
 });
+
+Route::get('/vnpay-payment', [PaymentController::class, 'createPayment']);
+Route::get('/vnpay-return', [PaymentController::class, 'vnpayReturn']);
