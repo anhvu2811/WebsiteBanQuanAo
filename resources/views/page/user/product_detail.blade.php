@@ -296,10 +296,8 @@
    <script src="{{ asset('js/jquery.responsivetabs.min.js') }}" type="text/javascript"></script>
    <script>
       $(window).on("load resize",function(e){
-      
          if($(window).width() > 1199){
                var he = $('.large-image.featured-image').height() - 100;
-      
                $('#gallery_01').height(he);
                if(he < 400){
                   var items = 2;
@@ -412,7 +410,62 @@
 
 
    </script>
+   <script>
+      $(document).ready(function() {
+         $('#add-to-cart-form').on('submit', function (e) {
+            e.preventDefault();
+            let form = $(this)[0];
+            let formData = new FormData(form);
+            $.ajax({
+                  url: $(form).attr('action'),
+                  type: 'POST',
+                  data: formData,
+                  processData: false,
+                  contentType: false,
+                  success: function (response) {
+                     if (response.success) {
+                        checkCart();
+                     }
+                  },
+                  error: function (xhr) {
+                     if (xhr.responseJSON?.message) {
+                        alert(xhr.responseJSON.message);
+                     }
+                  }
+            });
+         });
 
-    @include('page/user/list_brands');
+         function checkCart() {
+            const cartItemUrl = "{{ route('cart.get-cart-items') }}";
+            $.ajax({
+               url: cartItemUrl,
+               method: 'GET',
+               success: function(response) {
+                  if(response.success) {
+                     totalItem = response.totalItem;
+                     totalPrice = response.totalPrice;
+
+                     let html_totalItem = '';
+                     let html_totalPrice = '';
+
+                     html_totalItem += `${totalItem}`;
+
+                     let formattedPrice = new Intl.NumberFormat('vi-VN').format(totalPrice);
+                     html_totalPrice += `${formattedPrice}₫`;
+
+                     $('#cart-total').html('');
+                     $('#total-price').html('');
+                     $('#cart-total').html(html_totalItem);
+                     $('#total-price').html(html_totalPrice);
+                  }
+               },
+               error: function(xhr) {
+                  alert(xhr.responseJSON.error);
+               }
+            })
+         }
+      })
+   </script>
+   @include('page/user/list_brands');
 </div>
 @endsection

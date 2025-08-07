@@ -1,6 +1,6 @@
 <?php
     use App\Models\Order;
-    $order = Order::where('id', $order_id)->first();
+    $order = Order::where('id', $orderId)->first();
 ?>
 <style>
     .order-success-page {

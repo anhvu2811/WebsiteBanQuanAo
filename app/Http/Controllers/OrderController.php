@@ -48,9 +48,9 @@ class OrderController extends Controller
         $order->coupon_code = '';
 
         $method = $request->input('paymentMethod');
-        if($method = 'COD') {
+        if($method == 'COD') {
             $status = 'Pending';
-        } else if($method = 'Credit Card' || $method = 'Paypal') {
+        } else if($method == 'Credit Card') {
             $status = 'Completed';
         } else {
             $status = 'Failed';
@@ -87,6 +87,7 @@ class OrderController extends Controller
 
         CartItem::where('user_id', $userId)->update(['status' => 'purchased']);
         $orderId = $order->id;
-        return view('page.user.thankyou', compact('order_id'));
+        
+        return view('page.user.thankyou', compact('orderId'));
     }
 }

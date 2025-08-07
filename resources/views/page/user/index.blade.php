@@ -27,7 +27,7 @@
 
       img.img-responsive {
          width: 100%;
-         height: 100%;
+         height: auto;
          object-fit: cover;
       }
 
@@ -65,13 +65,9 @@
            <div class="swiper-wrapper">
                @foreach($bannerMain as $banner)
                   <div class="swiper-slide">
-                  <a href="#" class="clearfix" title="">
-                     <picture>
-                        <source media="(min-width: 1200px)" srcset="{{ asset($banner && $banner->banner_url ? 'storage/' . $banner->banner_url : 'path/to/default-image.jpg') }}">
-                        <source media="(min-width: 992px)" srcset="{{ asset($banner && $banner->banner_url ? 'storage/' . $banner->banner_url : 'path/to/default-image.jpg') }}">
-                        <source media="(min-width: 569px)" srcset="{{ asset($banner && $banner->banner_url ? 'storage/' . $banner->banner_url : 'path/to/default-image.jpg') }}">
-                        <source media="(max-width: 480px)" srcset="{{ asset($banner && $banner->banner_url ? 'storage/' . $banner->banner_url : 'path/to/default-image.jpg') }}">
-                        <img width="1920" height="550" src="{{ asset($banner && $banner->banner_url ? 'storage/' . $banner->banner_url : 'path/to/default-image.jpg') }}" alt="" class="img-responsive center-block">
+                     <a href="#" class="clearfix" title="">
+                     <picture style="width: 100%; height: 550px; overflow: hidden;">
+                        <img width="1920" height="650" src="{{ asset($banner && $banner->banner_url ? 'storage/' . $banner->banner_url : 'path/to/default-image.jpg') }}" alt="" class="img-responsive center-block">
                      </picture>
                   </a>
                   </div>

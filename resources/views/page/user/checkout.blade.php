@@ -191,6 +191,28 @@
                                        </div>
                                     </div>
                                  </div>
+                                 <div class="section__content" style="margin-top: 10px;">
+                                    <div class="content-box" data-define="{paymentMethod: undefined}">
+                                       <div class="content-box__row">
+                                          <div class="radio-wrapper">
+                                             <div class="radio__input">
+                                                <input name="paymentMethod" id="paymentMethod-24237" type="radio" class="input-radio" data-bind="paymentMethod" value="Credit Card" data-provider-id="4">
+                                             </div>
+                                             <label for="paymentMethod-24237" class="radio__label">
+                                             <span class="radio__label__primary">Thanh toán bằng thẻ (Credit/Debit Card)</span>
+                                             <span class="radio__label__accessory">
+                                             <span class="radio__label__icon">
+                                             <i class="payment-icon payment-icon--4"></i>
+                                             </span>
+                                             </span>
+                                             </label>
+                                          </div>
+                                          <div class="content-box__row__desc" data-bind-show="paymentMethod == 24237" data-provider-id="4">
+                                             <p>credit card</p>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
                               </section>
                            </div>
                         </article>

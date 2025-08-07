@@ -235,7 +235,7 @@
                                <div class="top-subtotal">
                                   Tổng tiền thanh toán: 
                                   @if(auth()->check())
-                                    <span class="price">{{ number_format($total , 0, ',', '.') }}₫</span>
+                                    <span class="price" id="total-price">{{ number_format($total , 0, ',', '.') }}₫</span>
                                   @endif
                                </div>
                             </li>
@@ -377,8 +377,9 @@
          if (cachedData && cachedTime && (Date.now() - cachedTime < cacheDuration)) {
             renderSettings(JSON.parse(cachedData));
          } else {
+            const settingUrl = "{{ route('header.setting') }}";
             $.ajax({
-               url: '/setting',
+               url: settingUrl,
                method: 'GET',
                success: function(response) {
                      if (response.success) {

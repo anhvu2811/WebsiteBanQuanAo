@@ -195,7 +195,7 @@
                      }
                   },
                   error: function(xhr) {
-                     alert('Get product error');
+                     alert(xhr.responseJSON.error);
                   }
                })
             }, 600);
@@ -324,7 +324,7 @@
                   }
                },
                error: function(xhr) {
-                  alert('Error get categories');
+                  alert(xhr.responseJSON.error);
                }
             })
          }

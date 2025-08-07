@@ -32,6 +32,7 @@ class CartController extends Controller
         $cartItem = CartItem::where('user_id', $userId)
             ->where('product_id', $product->id)
             ->where('size_id', intval($request->size_id))
+            ->where('status', 'pending')
             ->first();
 
         if ($cartItem) {
@@ -47,7 +48,10 @@ class CartController extends Controller
             ]);
         }
 
-        return redirect()->back()->with('success', 'Đã thêm vào giỏ hàng!');
+        return response()->json([
+            'success' => true,
+            'message' => 'Đã thêm vào giỏ hàng'
+        ]);
     }
 
     public function remove($id)
@@ -62,9 +66,28 @@ class CartController extends Controller
 
     public function checkout()
     {
-        $user = Auth()->user();
+        $user = auth()->user();
         return view('page.user.checkout', compact('user'));
     }
 
+    public function getCartItemByUser(Request $request)
+    {
+        $user = auth()->user();
+        if(!$user) return;
 
+        $cartItem = CartItem::where('user_id', $user->id)->where('status', 'pending')->get();
+
+        $totalItem = $cartItem->count();
+        $totalPrice = 0;
+        foreach($cartItem as $item) {
+            $totalPrice += $item->price * $item->quantity;
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $cartItem,
+            'totalItem' => $totalItem,
+            'totalPrice' => $totalPrice
+        ]);
+    }
 }
