@@ -377,21 +377,23 @@
          if (cachedData && cachedTime && (Date.now() - cachedTime < cacheDuration)) {
             renderSettings(JSON.parse(cachedData));
          } else {
-            const settingUrl = "{{ route('header.setting') }}";
-            $.ajax({
-               url: settingUrl,
-               method: 'GET',
-               success: function(response) {
-                     if (response.success) {
-                        localStorage.setItem(cacheKey, JSON.stringify(response.data));
-                        localStorage.setItem(cacheTimeKey, Date.now());
-                        renderSettings(response.data);
-                     }
-               },
-               error: function() {
-                     alert('Get info setting error');
-               }
+            setTimeout(() => {
+               const settingUrl = "{{ route('header.setting') }}";
+               $.ajax({
+                  url: settingUrl,
+                  method: 'GET',
+                  success: function(response) {
+                        if (response.success) {
+                           localStorage.setItem(cacheKey, JSON.stringify(response.data));
+                           localStorage.setItem(cacheTimeKey, Date.now());
+                           renderSettings(response.data);
+                        }
+                  },
+                  error: function(xhr) {
+                        alert(xhr.responseJSON.error);
+                  }
             });
+            }, 1500);
          }
 
          function renderSettings(data) {
