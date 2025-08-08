@@ -393,7 +393,7 @@
                         alert(xhr.responseJSON.error);
                   }
             });
-            }, 1500);
+            }, 1000);
          }
 
          function renderSettings(data) {
