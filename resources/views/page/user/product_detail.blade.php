@@ -166,7 +166,7 @@
                                     <span>Mua hàng</span>
                                  </button>
                               </div>
-                              <div class="products-available hide" style="padding: 10px;"></div>
+                              <div class="products-available hide" style="padding: 10px;"><span class="count-prod"></span> sản phẩm có sẵn</div>
                               <div class="sold-out hide">
                                  <label class="status hide"> </label>
                                  <h2>Sold out</h2>
@@ -356,7 +356,6 @@
          const sizeInput = document.getElementById('size_id');
          const quantityInput = document.querySelector('input[name="quantity"]');
          const form = document.getElementById('add-to-cart-form');
-         let availableQuantity = 0;
 
          sizeButtons.forEach(button => {
             button.addEventListener('click', function() {
@@ -370,42 +369,30 @@
                fetch(`/api/v1/checkquanity/${productId}/${selectedSize}`)
                      .then(response => response.json())
                      .then(data => {
-                        const quantityDisplay = document.querySelector('.products-available');
+                        const quantityBox = document.querySelector('.products-available');
+                        const quantityDisplay = document.querySelector('.count-prod');
                         const soldOutDisplay = document.querySelector('.sold-out');
                         const sizeQuantityDisplay = document.querySelector('.size-quantity');
                         const statusDisplay = document.querySelector('.status');
                         
-                        availableQuantity = data.quantity; 
+                        const availableQuantity = data.quantity; 
                         
                         if (data.quantity <= 0) {
                            sizeQuantityDisplay.style.display = 'none';
                            soldOutDisplay.classList.remove('hide');
                            statusDisplay.textContent = "Tình trạng:";
                            statusDisplay.classList.remove('hide');
-                           quantityDisplay.classList.add('hide');
+                           quantityBox.classList.add('hide');
                         } else {
                            sizeQuantityDisplay.style.display = 'block';
                            soldOutDisplay.classList.add('hide');
-                           quantityDisplay.textContent = `${data.quantity} sản phẩm có sẵn`;
-                           quantityDisplay.classList.remove('hide');
+                           quantityDisplay.textContent = `${data.quantity}`;
+                           quantityBox.classList.remove('hide');
                         }
                      })
                      .catch(error => console.error('Error:', error));
             });
          });
-
-         if (form) {
-            form.addEventListener('submit', function(event) {
-               if (!sizeInput || !sizeInput.value || parseInt(quantityInput.value) <= 0) {
-                     event.preventDefault();
-                     alert("Vui lòng chọn kích thước !");
-               }
-               else if (parseInt(quantityInput.value) > availableQuantity) {
-                     event.preventDefault();
-                     alert("Vui lòng nhập số lượng hợp lệ !");
-               }
-            });
-         }
       });
 
 
@@ -414,12 +401,11 @@
       $(document).ready(function() {
          $('#add-to-cart-form').on('submit', function (e) {
             e.preventDefault();
-
-            const checkBtnSize = $('#size_id').val();
-            if(checkBtnSize === '' || checkBtnSize === null) return;
-            
+            if(!validateProductForm()) return;
             let form = $(this)[0];
             let formData = new FormData(form);
+            const loginUrl = "{{ route('login') }}";
+            
             $.ajax({
                   url: $(form).attr('action'),
                   type: 'POST',
@@ -431,6 +417,9 @@
                         toastr.success(response.message);
                         checkCart();
                      }
+                     else {
+                        window.location.href = loginUrl;
+                     }
                   },
                   error: function (xhr) {
                      if (xhr.responseJSON?.message) {
@@ -439,6 +428,27 @@
                   }
             });
          });
+
+         function validateProductForm() {
+            const sizeInput = $('#size_id');
+            const quantityInput = $('input[name="quantity"]');
+            const quantityDisplay = $('.count-prod');
+
+            const availableQuantity = parseInt(quantityDisplay.text()) || 0;
+            if (!sizeInput.val() || sizeInput.length === 0 || parseInt(quantityInput.val()) <= 0) {
+               toastr.warning('Vui lòng chọn kích thước !');
+               return false;
+            }
+            if (parseInt(quantityInput.val()) <= 0) {
+               toastr.warning('Số lượng không hợp lệ !');
+               return false;
+            }
+            if (parseInt(quantityInput.val()) > availableQuantity) {
+               toastr.warning('Số lượng không hợp lệ !');
+               return false;
+            }
+            return true;
+         }
 
          function checkCart() {
             const cartItemUrl = "{{ route('cart.get-cart-items') }}";

@@ -20,7 +20,6 @@ Route::get('/news', [SettingController::class, 'displayNews'])->name('page.news'
 Route::get('/account/login', [SettingController::class, 'displayLogin'])->name('login');
 Route::get('/collections/all', [ProductController::class, 'collections'])->name('product.collections');
 Route::get('/collections/{id}', [ProductController::class, 'getProductDetail'])->name('product.getProductDetail');
-Route::get('/collections/{gender}/{categoryName}', [ProductController::class, 'showCategoryProducts'])->name('product.productByCategory');
 
 // --------------------- Login ---------------------
 Route::post('/account/login', [LoginController::class, 'login'])->name('login.index');

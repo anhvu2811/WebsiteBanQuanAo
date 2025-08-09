@@ -8,6 +8,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
+    <style>
+        #toast-container.toast-top-right {
+            top: 60px;
+            right: 12px;
+        }
+    </style>
 </head>
 <body>
     @include('layouts/user/header')

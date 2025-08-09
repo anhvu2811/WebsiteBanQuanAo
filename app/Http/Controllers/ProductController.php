@@ -168,19 +168,7 @@ class ProductController extends Controller
     {
         return view('page.user.collections');
     }
-
-    public function showCategoryProducts(Request $request, $gender, $categoryName) 
-    {
-        $category = Category::where('name', $categoryName)->first();
-        if($gender == 'male') {
-            $gender = 1;
-        } else {
-            $gender = 0;
-        }
-        $products = Product::where('category_id', $category->id)->where('gender', $gender)->paginate($perPage);
-        return view('page.user.collections', compact('products'));
-    }
-
+    
     public function getHotTrendProducts()
     {
         $hotTrendProducts = Trending::with('product')
