@@ -23,18 +23,9 @@
            <div class="col-lg-6">
               <div class="page-login margin-bottom-30">
                  <div id="login">
-                    <form method="post" action="{{ route('login.index' )}}" id="customer_login" accept-charset="UTF-8">
+                    <form id="customer_login" accept-charset="UTF-8">
                         @csrf
                        <input name="FormType" type="hidden" value="customer_login"><input name="utf8" type="hidden" value="true">
-                        <div class="form-signup errors">
-                           @if ($errors->any())
-                              <ul>
-                                 @foreach ($errors->all() as $error)
-                                       <li>{{ $error }}</li> 
-                                 @endforeach
-                              </ul>
-                           @endif
-                        </div>
                        <div class="form-signup clearfix">
                           <fieldset class="form-group">
                              <label>Email <span class="required">*</span></label>
@@ -66,9 +57,9 @@
                  <span>
                  Bạn quên mật khẩu? Nhập địa chỉ email để lấy lại mật khẩu qua email.
                  </span>					
-                 <form method="post" action="/reset-password" id="recover_customer_password" accept-charset="UTF-8">
+                 <form accept-charset="UTF-8" id="reset-pass-form">
                      @csrf
-                    <input name="FormType" type="hidden" value="recover_customer_password"><input name="utf8" type="hidden" value="true">
+                    <input name="FormType" type="hidden"><input name="utf8" type="hidden" value="true">
                     <div class="form-signup aaaaaaaa">
                     </div>
                     <div class="form-signup clearfix">
@@ -77,18 +68,6 @@
                           <input type="email" class="form-control form-control-lg" value="" name="reset-password-email" id="recover-email" placeholder="Email">
                        </fieldset>
                     </div>
-                    {{-- Hiển thị thông báo thành công --}}
-                     @if (session('status'))
-                        <div class="alert alert-success">
-                           {{ session('status') }}
-                        </div>
-                     @endif
-                     {{-- Hiển thị thông báo lỗi --}}
-                     @if (session('error'))
-                        <div class="alert alert-danger">
-                           {{ session('error') }}
-                        </div>
-                     @endif
                     <div class="action_bottom">
                        <input class="btn  btn-primary" style="margin-top: 25px;" type="submit" value="Đặt lại mật khẩu">
                     </div>
@@ -98,17 +77,67 @@
         </div>
      </div>
      <script type="text/javascript">
-        function showRecoverPasswordForm() {
-            document.getElementById('recover-password').style.display = 'block';
-            document.getElementById('login').style.display='none';
-        }
+         function showRecoverPasswordForm() {
+               document.getElementById('recover-password').style.display = 'block';
+               document.getElementById('login').style.display='none';
+         }
+         
+         function hideRecoverPasswordForm() {
+               document.getElementById('recover-password').style.display = 'none';
+               document.getElementById('login').style.display = 'block';
+         }
         
-        function hideRecoverPasswordForm() {
-            document.getElementById('recover-password').style.display = 'none';
-            document.getElementById('login').style.display = 'block';
-        }
+         $(document).ready(function () {
+            $('#reset-pass-form').on('submit', function(e) {
+               e.preventDefault();
+
+               let form = $(this);
+               let formData = form.serialize();
+
+               const apiResetPass = "{{ route('reset-password' )}}";
+               $.ajax({
+                  url: apiResetPass,
+                  method: 'POST',
+                  data: formData,
+                  success: function(response) {
+                     if(!response.success) {
+                        toastr.error(response.message);
+                        return;
+                     } 
+                     form[0].reset();
+                     toastr.success(response.message);
+                  },
+               })
+
+            });
+            $('#customer_login').on('submit', function(e) {
+               e.preventDefault();
+
+               let form = $(this);
+               let formData = form.serialize();
+
+               const apiLogin = "{{ route('login.index' )}}";
+               $.ajax({
+                  url: apiLogin,
+                  method: 'POST',
+                  data: formData,
+                  success: function(response) {
+                     if(!response.success) {
+                        toastr.error(response.message);
+                        return;
+                     } 
+                     form[0].reset();
+                     setTimeout(() => {
+                        window.location.href = response.redirect;
+                     }, 700);
+                     toastr.success(response.message);
+                  },
+               });
+
+            })
+         });
         
-        
+
      </script>
      @include('page/user/list_brands');
 </div>

@@ -268,11 +268,11 @@
        </ul>
     </nav>
 
-   <div id="change-password-modal" id="change-password-form" class="modal">
+   <div id="change-password-modal" class="modal">
       <div class="modal-content">
          <span id="close-modal" class="close">&times;</span>
          <h2 style="text-align: center; margin-bottom: 20px; margin-top: -10px;">Đổi mật khẩu</h2>
-         <form action="{{ route('change-password') }}" method="POST">
+         <form id="change-password-form">
                @csrf
                <div>
                   <label for="current-password">Mật khẩu hiện tại</label>
@@ -421,6 +421,31 @@
             const pageTitle = document.title || '';
             document.title = `${data.site_name || 'Website'}${pageTitle ? ' | ' + pageTitle : ''}`;
          }
+
+         $('#change-password-form').on('submit', function(e) {
+            e.preventDefault();
+
+            let form = $(this);
+            let formData = form.serialize();
+            let formChangePass = $('#change-password-modal');
+
+            const apiChangePass = "{{ route('change-password') }}";
+            $.ajax({
+               url: apiChangePass,
+               method: 'POST',
+               data: formData,
+               success: function(response) {
+                  if(!response.success) {
+                     toastr.error(response.message);
+                     formChangePass.show();
+                     return;
+                  } 
+                  form[0].reset();
+                  toastr.success(response.message);
+                  formChangePass.hide();
+               },
+            });
+         });
       });
    </script>
  </header>

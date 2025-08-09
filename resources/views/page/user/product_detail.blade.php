@@ -428,6 +428,7 @@
                   contentType: false,
                   success: function (response) {
                      if (response.success) {
+                        toastr.success(response.message);
                         checkCart();
                      }
                   },

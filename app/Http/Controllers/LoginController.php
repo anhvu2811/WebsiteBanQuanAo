@@ -23,31 +23,48 @@ class LoginController extends Controller
         $password = $request->input('password');
 
         if(!$email) {
-            return back()->withErrors(['errors' => 'Email cannot be empty'])->withInput();
+            return response()->json([
+                'success' => false,
+                'message' => 'Email không được để trống'
+            ]);
         }
         if(!$password) {
-            return back()->withErrors(['errors' => 'Password cannot be empty'])->withInput();
+            return response()->json([
+                'success' => false,
+                'message' => 'Mật khẩu không được để trống'
+            ]);
         }
         
         $user = User::where('email', $email)->first();
         if (!$user || !Hash::check($password, $user->password)) {
-            return back()->withErrors(['errors' => 'Invalid username/password'])->withInput();
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid username/password'
+            ]);
+        }
+        Auth::attempt(['email' => $email, 'password' => $password]);
+        $user = auth()->user();
+        switch ($user->role) {
+            case User::ROLE_CUSTOMER:
+                $redirect = route('page.index');
+                break;
+            case User::ROLE_ADMIN:
+                $redirect = route('admin.dashboard');
+                break;
+            case User::ROLE_SELLER:
+                $redirect = route('admin.dashboard');
+                break;
+            default:
+                $redirect = route('page.index');
+                break;
         }
 
-        if (Auth::attempt(['email' => $email, 'password' => $password])) {
-            $user = auth()->user();
-            switch ($user->role) {
-                case User::ROLE_CUSTOMER:
-                    return redirect()->route('page.index');
-                case User::ROLE_ADMIN:
-                    return redirect()->route('admin.dashboard');
-                case User::ROLE_SELLER:
-                    return redirect()->route('admin.dashboard');
-                default:
-                    return redirect()->route('login');
-            }
-        }
 
+        return response()->json([
+            'success' => true,
+            'message' => 'Đăng nhập thành công',
+            'redirect' => $redirect
+        ]);
     }
 
     public function logout(Request $request)
@@ -62,17 +79,28 @@ class LoginController extends Controller
     {
         $email = $request->input('reset-password-email');
         $user = User::where('email', $email)->first();
+        if(!$email) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Email không được để trống'
+            ]);
+        }
         if(!$user) {
-            session()->flash('error', 'Email không tồn tại trong hệ thống.');
-            return redirect()->back();
+            return response()->json([
+                'success' => false,
+                'message' => 'Email không tồn tại trong hệ thống.'
+            ]);
         }
         $newPassword = Str::random(6);
         $hashPassword = Hash::make($newPassword);
         $user->update(['password' => $hashPassword]);
 
         SendResetPasswordEmail::dispatch($email, $user->name, $newPassword);
-        session()->flash('status', 'Mật khẩu mới đã được gửi vào email của bạn.');
-        return redirect()->route('login');
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Mật khẩu mới đã được gửi vào email của bạn.'
+        ]);
     }
 
     public function changePassword(Request $request)
@@ -84,31 +112,27 @@ class LoginController extends Controller
         $user = auth()->user();
         if(!Hash::check($currentPass, $user->password)) {
             return response()->json([
-                'status' => 'error',
-                'message' => 'Current password is incorrect.'
+                'success' => false,
+                'message' => 'Mật khẩu hiện tại không đúng'
             ]);
         }
         if($newPass != $confirmPass) {
             return response()->json([
-                'status' => 'error',
-                'message' => 'New password and Confirm Password are not the same.'
+                'success' => false,
+                'message' => 'Mật khẩu mới và xác nhận mật khẩu không khớp'
             ]);
         }
-        $user->update([
-            'password' => Hash::make($newPass)
-        ]);
+        $user->update(['password' => Hash::make($newPass)]);
         AuditLog::create([
             'user_id' => $user->id,
             'event' => 'change_password',
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
-
-        // return response()->json([
-        //     'status' => 'success',
-        //     'message' => 'Password updated successfully'
-        // ]);
         
-        return redirect()->back()->with('success', 'Password changed successfully!');
+        return response()->json([
+            'success' => true,
+            'message' => 'Thay đổi mật khẩu thành công'
+        ]);
     }
 }
