@@ -435,15 +435,11 @@
             const quantityDisplay = $('.count-prod');
 
             const availableQuantity = parseInt(quantityDisplay.text()) || 0;
-            if (!sizeInput.val() || sizeInput.length === 0 || parseInt(quantityInput.val()) <= 0) {
+            if (!sizeInput.val() || sizeInput.length === 0) {
                toastr.warning('Vui lòng chọn kích thước !');
                return false;
             }
-            if (parseInt(quantityInput.val()) <= 0) {
-               toastr.warning('Số lượng không hợp lệ !');
-               return false;
-            }
-            if (parseInt(quantityInput.val()) > availableQuantity) {
+            if (parseInt(quantityInput.val()) <= 0 || parseInt(quantityInput.val()) > availableQuantity) {
                toastr.warning('Số lượng không hợp lệ !');
                return false;
             }
