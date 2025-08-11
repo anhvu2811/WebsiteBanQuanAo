@@ -29,7 +29,7 @@
                        <div class="form-signup clearfix">
                           <fieldset class="form-group">
                              <label>Email <span class="required">*</span></label>
-                             <input type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,63}$" class="form-control form-control-lg" value="" name="email" id="customer_email" placeholder="Email">
+                             <input type="email" class="form-control form-control-lg" value="" name="email" id="customer_email" placeholder="Email">
                           </fieldset>
                           <fieldset class="form-group">
                              <label>Mật khẩu <span class="required">*</span></label>

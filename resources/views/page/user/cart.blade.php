@@ -3,6 +3,7 @@
 @section('content')
 <head>
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+   <meta name="csrf-token" content="{{ csrf_token() }}">
    <style>
       .box-heading {
          margin-bottom: 30px;
@@ -130,45 +131,11 @@
                         <th>Thao tác</th>
                      </tr>
                   </thead>
-                  <tbody id="body-cart">
-                     @foreach($listCart as $cart)
-                     <tr>
-                           @php
-                              $product = \App\Models\Product::find($cart->product_id);
-                           @endphp
-                           <td><img src="{{ asset('storage/' . $product->images->first()->image_url) }}" alt="{{ $product->name }}" width="100"></td>
-                           <td>
-                              {{ $product->name }}
-                           </td>
-                           <td style="text-align: center; font-size: 15px;">
-                              @php
-                                 $size = \App\Models\Size::find($cart['size_id']);
-                              @endphp
-                              {{ $size ? $size->name : '' }}
-                           </td>
-                           <td>
-                              <input type="number" value="{{ $cart['quantity'] }}" min="1" max="10" />
-                           </td>
-                           <td>
-                              {{ number_format($cart['quantity'] * $cart['price'], 0, ',', '.') }}₫
-                           </td>
-                           <td>
-                              <form action="{{ route('cart.remove', $cart->id) }}" method="POST" style="text-align: center; margin-top: 30px;">
-                                 @csrf
-                                 @method('DELETE')
-                                 <button type="submit" class="btn btn-danger" style="border: none; background: none;">
-                                    <i class="fa fa-times" style="font-size: 20px; color: #e8b34f; font-weight: bold;"></i>
-                              </button>
-                              </form>
-                           </td>
-                     </tr>
-                     @endforeach
-               </tbody>
+                  <tbody id="body-cart"></tbody>
                </table>
             </section>
-
             <div class="cart-summary">
-               <div class="total" style="margin-top: 10px">Tổng tiền: <span style="color: #e8b34f">{{ number_format($total , 0, ',', '.') }}₫</span></div>
+               <div class="total" style="margin-top: 10px">Tổng tiền: <span style="color: #e8b34f" id="total-price-cart">0</span></div>
                <a href="{{ route('cart.checkout') }}">
                   <button class="checkout-button" style="background-color: #e8b34f; color: #fff; border-radius: 3px; height: 50px; line-height: 35px; padding: 0 50px; font-size: 16px;">
                       Tiến hành thanh toán
@@ -176,20 +143,124 @@
               </a>
             </div>
          @else
-            <p>Không có sản phẩm nào trong giỏ hàng.</p>
+            <p id="non-cart">Không có sản phẩm nào trong giỏ hàng.</p>
          @endif
       </div>
    </div>
    @include('page/user/list_brands');
 </div>
 @endsection
-@section('script')
-   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@section('scripts')
    <script>
       $(document).ready(function() {
-         // if($('#body-cart')) {
-         //    console.log('Body-cart');
-         // }
+         loadCart();
+
+         function loadCart() {
+            const nonCart = $('#non-cart');
+            if(nonCart.length > 0) {
+               return;
+            }
+            const getCart = "{{ route('cart.get-cart') }}";
+            $.ajax({
+               url: getCart,
+               method: 'GET',
+               success: function(response) {
+                  if(response.success) {
+                     products = response.data;
+                     let html =  renderDataTable(products);
+                     $('#body-cart').html('');
+                     $('#body-cart').html(html);
+                  }
+               },
+               error: function(xhr) {
+                  alert(xhr.responseJSON.error);
+               }
+            });
+         }
+
+         function renderDataTable(products) {
+            let total = 0;
+            let html = '';
+            products.forEach(function(item) {
+               html += `<tr>
+                           <td><img src="/storage/${item.product.images[0].image_url}" alt="${item.product.name}" width="100"></td>
+                           <td>
+                              ${item.product.name}
+                           </td>
+                           <td style="text-align: center; font-size: 15px;">
+                              ${item.size ? item.size.name : ''}
+                           </td>
+                           <td style="width: 120px;">
+                              <input type="number" value="${item.quantity}" min="1" max="10" onchange="updateCartQuantity(event, ${item.id})"/>
+                           </td>
+                           <td>
+                              ${(item.quantity * item.price).toLocaleString('vi-VN')}₫
+                           </td>
+                           <td>
+                              <button class="btn btn-danger" style="border: none; background: none;" onclick="removeItem(event, ${item.id})">
+                                 <i class="fa fa-times" style="font-size: 20px; color: #e8b34f; font-weight: bold;"></i>
+                              </button>
+                           </td>
+                     </tr>`;
+                  total += item.quantity * item.price;
+            });
+            $('#total-price').html(total.toLocaleString('vi-VN') + '₫');
+            $('#total-price-cart').text(total.toLocaleString('vi-VN') + '₫');
+            return html;
+         }
+
+         window.removeItem = function(event, itemId) {
+            event.preventDefault();
+
+            const apiRemoveItem = `/remove-item/${itemId}`;
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            $.ajax({
+               url: apiRemoveItem,
+               method: 'DELETE',
+               headers: {
+                  'X-CSRF-TOKEN': csrfToken
+               },
+               success: function(response) {
+                  if(response.success) {
+                     loadCart();
+                     toastr.success(response.message);
+                  }
+               },
+              error: function(xhr) {
+                  alert(xhr);
+               }
+            });
+         }
+
+         window.updateCartQuantity = function(event, itemId) {
+            event.preventDefault();
+            const quantity = parseInt(event.target.value);
+            if(quantity <= 0) {
+               toastr.warning('Số lượng không hợp lệ !');
+               loadCart();
+               return;
+            }
+            const apiUpdateQuantity = `/update-quantity/${itemId}/${quantity}`;
+            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+
+            $.ajax({
+               url: apiUpdateQuantity,
+               method: 'POST',
+               headers: {
+                  'X-CSRF-TOKEN': token
+               },
+               success: function(response) {
+                  if(response.success) {
+                     loadCart();
+                     toastr.success(response.message);
+                  }
+               },
+              error: function(xhr) {
+                  alert(xhr);
+               }
+            });
+         }
       })
    </script>
 @endsection

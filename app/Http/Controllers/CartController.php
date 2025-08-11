@@ -16,8 +16,19 @@ class CartController extends Controller
 
     public function cart()
     {
-        $setting = Setting::first();
-        return view('page.user.cart', compact('setting'));
+        return view('page.user.cart');
+    }
+
+    public function getCart(Request $request) 
+    {
+        $user = auth()->user();
+        if(!$user) return;
+
+        $data = CartItem::where('user_id', $user->id)->where('status', 'pending')->with('product.images', 'size')->get();
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
     }
 
     public function addToCart(Request $request)
@@ -57,11 +68,11 @@ class CartController extends Controller
     public function remove($id)
     {
         $cartItem = CartItem::find($id);
-        if ($cartItem) {
-            $cartItem->delete();
-            return redirect()->back()->with('success', 'Sản phẩm đã được xóa khỏi giỏ hàng!');
+        if (!$cartItem) {
+            return redirect()->back()->with('error', 'Không tìm thấy sản phẩm trong giỏ hàng !');
         }
-        return redirect()->back()->with('error', 'Không tìm thấy sản phẩm trong giỏ hàng!');
+        $cartItem->delete();
+        return redirect()->back()->with('success', 'Xóa thành công !');
     }
 
     public function checkout()
@@ -88,6 +99,37 @@ class CartController extends Controller
             'data' => $cartItem,
             'totalItem' => $totalItem,
             'totalPrice' => $totalPrice
+        ]);
+    }
+
+    public function removeItem($itemId)
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        CartItem::where('id', $itemId)->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'Xóa thành công',
+        ]);
+    }
+
+    public function updateQuantity($itemId, $quantity)
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        $cartItem = CartItem::find($itemId);
+        if (!$cartItem) {
+            return redirect()->back()->with('error', 'Không tìm thấy sản phẩm trong giỏ hàng !');
+        }
+        $cartItem->update(['quantity' => $quantity]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Cập nhập thành công',
         ]);
     }
 }

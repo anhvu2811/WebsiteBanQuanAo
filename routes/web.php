@@ -81,3 +81,7 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/vnpay-payment', [PaymentController::class, 'createPayment']);
 Route::get('/vnpay-return', [PaymentController::class, 'vnpayReturn']);
+
+Route::get('get-cart', [CartController::class, 'getCart'])->name('cart.get-cart');
+Route::delete('remove-item/{id}', [CartController::class, 'removeItem'])->name('cart.remove-item');
+Route::post('update-quantity/{id}/{quantity}', [CartController::class, 'updateQuantity'])->name('cart.update-quantity');

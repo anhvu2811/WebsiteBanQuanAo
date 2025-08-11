@@ -12,26 +12,22 @@ class SettingController extends Controller
      */
     public function displayAbout()
     {
-        $setting = Setting::first();
-        return view('page.user.about', compact('setting'));
+        return view('page.user.about');
     }
 
     public function displayNews()
     {
-        $setting = Setting::first();
-        return view('page.user.news', compact('setting'));
+        return view('page.user.news');
     }
 
     public function displayLogin()
     {
-        $setting = Setting::first();
-        return view('page.user.login', compact('setting'));
+        return view('page.user.login');
     }
 
     public function edit()
     {
-        $setting = Setting::first();
-        return view('setting.update', compact('setting'));
+        return view('setting.update');
     }
 
     public function update(Request $request)
