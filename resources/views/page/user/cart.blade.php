@@ -191,7 +191,7 @@
                               ${item.size ? item.size.name : ''}
                            </td>
                            <td style="width: 120px;">
-                              <input type="number" value="${item.quantity}" min="1" max="10" onchange="updateCartQuantity(event, ${item.id})"/>
+                              <input type="number" value="${item.quantity}" min="1" onchange="updateCartQuantity(event, ${item.id})"/>
                            </td>
                            <td>
                               ${(item.quantity * item.price).toLocaleString('vi-VN')}₫
