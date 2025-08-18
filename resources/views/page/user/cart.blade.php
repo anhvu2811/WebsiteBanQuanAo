@@ -206,6 +206,7 @@
             });
             $('#total-price').html(total.toLocaleString('vi-VN') + '₫');
             $('#total-price-cart').text(total.toLocaleString('vi-VN') + '₫');
+            $('#cart-total').html(products.length);
             return html;
          }
 
