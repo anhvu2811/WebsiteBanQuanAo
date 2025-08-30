@@ -351,6 +351,9 @@
             e.preventDefault();  
             search  = $('#search-input').val().trim();
             if(search.length === 0) return;
+            cate_id = null;
+            gender = null;
+            sortBy = null;
             page = 1;
             hasMore = true;
             $('#cart-product').html('');
@@ -363,8 +366,11 @@
             e.preventDefault();
             cate_id = $(this).data('id');
             gender = $(this).data('gender');
+            search = null;
+            sortBy = null;
             page = 1;
             hasMore = true;
+            $('#result-search-text').html('');
             $('#cart-product').html('');
             getProducts();
          });
