@@ -1,7 +1,7 @@
-@extends('layouts/layoutmaster')
-@section('title', 'Cài đặt')
+@extends('layouts.admin.app')
+@section('title', 'Settings')
+@section('header-title', 'Settings')
 @section('content')
-    <h1>Setting</h1>
     <form action="{{ route('setting.update') }}" method="POST">
         @csrf
         @method('PUT')

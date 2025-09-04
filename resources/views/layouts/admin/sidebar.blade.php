@@ -6,7 +6,7 @@
         <a href="#"><i>📊</i><span>Category</span></a>
         <a href="{{ route('order.index') }}" class="{{ request()->is('order') ? 'active' : '' }}"><i>🛒</i><span>Orders</span></a>
         <a href="#"><i>👥</i><span>Customers</span></a>
-        <a href="#"><i>⚙️</i><span>Settings</span></a>
+        <a href="{{ route('setting.edit') }}"><i>⚙️</i><span>Settings</span></a>
         <a href="/"><i>⬅️</i><span>Home page</span></a>
     </nav>
 </aside>
