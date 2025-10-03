@@ -13,12 +13,12 @@
   <table align="center" width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff; border-radius:10px; padding:20px;">
     <tr>
       <td align="center">
-        <img src="https://i.postimg.cc/qqBmK8X9/logo.png" alt="Logo" width="150" style="margin-bottom:20px;" />
+        <img src="https://i.ibb.co/fzLv84Q6/logo.png" alt="Logo" width="150" style="margin-bottom:20px;" />
       </td>
     </tr>
     <tr>
       <td align="center">
-        <img src="https://i.postimg.cc/XNcSyL3D/icon-success.png" alt="Icon" width="60" style="margin-bottom:16px;" />
+        <img src="https://i.postimg.cc/T3j8LqhC/icon-success.png" alt="Icon" width="60" style="margin-bottom:16px;" />
       </td>
     </tr>
     <tr>

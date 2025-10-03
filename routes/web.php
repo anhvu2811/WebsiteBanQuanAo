@@ -12,6 +12,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Middleware\CheckRole;
 
 Route::get('/', [ProductController::class, 'getHotTrendProducts'])->name('page.index');
@@ -85,3 +86,7 @@ Route::get('/vnpay-return', [PaymentController::class, 'vnpayReturn']);
 Route::get('get-cart', [CartController::class, 'getCart'])->name('cart.get-cart');
 Route::delete('remove-item/{id}', [CartController::class, 'removeItem'])->name('cart.remove-item');
 Route::post('update-quantity/{id}/{quantity}', [CartController::class, 'updateQuantity'])->name('cart.update-quantity');
+
+// Notification api
+Route::get('get-notifications', [NotificationController::class, 'getUserNotifications'])->name('noti.get-notifications');
+Route::post('mask-as-read/{id}', [NotificationController::class, 'maskAsRead'])->name('noti.mask-as-read');
