@@ -20,5 +20,6 @@ yarn-error.log
 /.vscode
 
 # Giữ lại các file image trong storage/app/public
-!/storage/app/public/
-!/storage/app/public/**/*
+/storage/*
+!/storage/app
+!/storage/app/public
