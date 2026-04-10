@@ -16,7 +16,6 @@
 </head>
 <body>
     @include('layouts/user/header')
-
     <script>
         toastr.options = {
             "closeButton": true,
@@ -41,7 +40,6 @@
             toastr.info("{{ session('info') }}");
         @endif
     </script>
-
     @yield('content')
     @yield('scripts')
     @include('layouts/user/footer')

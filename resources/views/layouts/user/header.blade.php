@@ -115,7 +115,6 @@
    button[type="submit"] {
       background-color: #e8b34f;
       color: #fff;
-      padding: 10px 20px;
       border: none;
       border-radius: 4px;
       cursor: pointer;

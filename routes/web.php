@@ -27,6 +27,7 @@ Route::get('/collections/{slug}-{id}', [ProductController::class, 'getProductDet
 
 Route::post('/account/login', [LoginController::class, 'login'])->name('login.index');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::post('/reset-password', [LoginController::class, 'resetPassword'])->name('reset-password');
 
 Route::middleware('auth')->group(function () {
     Route::get('/get-cart-items', [CartController::class, 'getCartItemByUser'])->name('cart.get-cart-items');
@@ -38,7 +39,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/order-page', [OrderController::class, 'orderPage'])->name('page.order-page');
     Route::get('/infomation', [LoginController::class, 'information'])->name('page.information');
     Route::post('/update-infor', [LoginController::class, 'updateInfor'])->name('page.update-infor');
-    Route::post('/reset-password', [LoginController::class, 'resetPassword'])->name('reset-password');
 
     // --------------------- Cart ---------------------
     Route::get('/cart', [CartController::class, 'cart'])->name('cart.index');

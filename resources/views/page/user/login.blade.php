@@ -1,6 +1,37 @@
 @extends('layouts/user/layoutmaster')
 @section('page_title', 'Đăng Nhập')
 @section('content')
+<style>
+   #submitBtn {
+      position: relative;
+      overflow: hidden;
+      transition: all .5s ease;
+   }
+
+   /* Ẩn text khi loading */
+   #submitBtn.loading .btn-text {
+      opacity: 0;
+   }
+
+   /* Spinner */
+   #submitBtn.loading::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 18px;
+      height: 18px;
+      border: 3px solid white;
+      border-top-color: transparent;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      animation: spin .7s linear infinite;
+   }
+
+   @keyframes spin {
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+   }
+</style>
 <div>
     <section class="bread-crumb">
         <div class="container">
@@ -37,10 +68,13 @@
                           </fieldset>
                           <div class="pull-xs-left" style="margin-top: 25px;">
                               <!-- Turnstile widget -->
-                              <div class="cf-turnstile"
+                              {{-- <div class="cf-turnstile"
                                     data-sitekey="{{ config('services.turnstile.site_key') }}">
-                              </div>
-                              <input class="btn btn-primary" type="submit" value="Đăng nhập">
+                              </div> --}}
+                              {{-- <input class="btn btn-primary" type="submit" id="submitBtn" value="Đăng nhập"> --}}
+                              <button type="submit" class="btn btn-primary" id="submitBtn">
+                                 <span class="btn-text">Đăng nhập</span>
+                              </button>
                              {{-- <a href="/account/register" class="btn-link-style btn-register" style="margin-left: 20px;text-decoration: underline; ">Đăng ký</a> --}}
                              <div class="block social-login--facebooks">
                                 <p class="a-center">
@@ -117,9 +151,11 @@
             });
             $('#customer_login').on('submit', function(e) {
                e.preventDefault();
-
                let form = $(this);
                let formData = form.serialize();
+               const btn = document.getElementById('submitBtn');
+               btn.classList.add("loading");
+               btn.disabled = true;
 
                const apiLogin = "{{ route('login.index' )}}";
                $.ajax({
@@ -137,13 +173,19 @@
                      }, 700);
                      toastr.success(response.message);
                   },
+                  complete: function() {
+                     btn.classList.remove("loading");
+                     btn.disabled = false;
+                  }
                });
 
             })
          });
-        
-
      </script>
      @include('page/user/list_brands');
 </div>
+@endsection
+
+@section('scripts')
+
 @endsection
